@@ -1,0 +1,33 @@
+{
+  "name": "leadpulse-core",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Enterprise-grade B2B lead intelligence, CRM, and revenue operations platform for solo founders",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:worker": "npm run dev --workspace=apps/worker",
+    "build": "npm run build --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "lint": "npm run lint --workspaces",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+  },
+  "devDependencies": {
+    "@types/node": "20.17.6",
+    "@types/react": "19.3.0",
+    "drizzle-kit": "^0.28.1",
+    "prettier": "^3.3.3",
+    "typescript": "5.8.2",
+    "vitest": "^2.1.4"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@leadpulse/domain": ["../../packages/domain/src"],
+      "@leadpulse/domain/*": ["../../packages/domain/src/*"],
+      "@leadpulse/contracts": ["../../packages/contracts/src"],
+      "@leadpulse/contracts/*": ["../../packages/contracts/src/*"],
+      "@leadpulse/infrastructure": ["../../packages/infrastructure/src"],
+      "@leadpulse/infrastructure/*": ["../../packages/infrastructure/src/*"],
+      "@leadpulse/ui": ["../../packages/ui/src"],
+      "@leadpulse/ui/*": ["../../packages/ui/src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
