@@ -1,0 +1,43 @@
+# Node / npm
+node_modules/
+.npm/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Environment and secrets
+.env
+.env*.local
+!.env.example
+
+# Playwright & Lighthouse test artifacts
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+.lighthouseci/
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+
+# Database / SQLite local scratch if any
+*.sqlite
+*.sqlite-journal
+*.db
