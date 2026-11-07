@@ -108,3 +108,29 @@ export const QuickCaptureInputSchema = z.object({
   ]).default("NO_WEBSITE"),
 });
 export type QuickCaptureInput = z.infer<typeof QuickCaptureInputSchema>;
+
+// --- CSV Import Row Schema ---
+export const CsvLeadRowSchema = z.object({
+  name: z.string().min(1, "Business name is required"),
+  category: z.string().optional().default("Local Business"),
+  phone: z.string().optional().default(""),
+  email: z.string().optional().default(""),
+  website: z.string().optional().default(""),
+  address: z.string().optional().default(""),
+  city: z.string().optional().default("Chennai"),
+  whatsappNumber: z.string().optional().default(""),
+  notes: z.string().optional().default(""),
+});
+export type CsvLeadRow = z.infer<typeof CsvLeadRowSchema>;
+
+export const CsvImportResultSchema = z.object({
+  totalRows: z.number(),
+  importedCount: z.number(),
+  skippedDuplicateCount: z.number(),
+  errorCount: z.number(),
+  errors: z.array(z.object({
+    rowNumber: z.number(),
+    reason: z.string(),
+  })),
+});
+export type CsvImportResult = z.infer<typeof CsvImportResultSchema>;

@@ -2,7 +2,7 @@ import { drizzle as drizzleServerless } from "drizzle-orm/neon-serverless";
 import { drizzle as drizzleNode } from "drizzle-orm/postgres-js";
 import { Pool, neonConfig } from "@neondatabase/serverless";
 import postgres from "postgres";
-import * as schema from "./schema.js";
+import * as schema from "./schema";
 
 // Enable WebSocket for Neon serverless pool in Node environments if needed
 neonConfig.fetchConnectionCache = true;

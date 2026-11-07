@@ -1,3 +1,4 @@
-export * as schema from "./db/schema.js";
-export * from "./db/client.js";
-export * from "./security/ssrf-filter.js";
+export * as schema from "./db/schema";
+export * from "./db/client";
+export * from "./security/ssrf-filter";
+export * from "./repositories/business-repository";
