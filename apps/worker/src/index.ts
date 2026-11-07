@@ -1,5 +1,11 @@
-import { getWorkerDb, schema, validateUrlForSSRF } from "@leadpulse/infrastructure";
-import { eq, and, lte, sql } from "drizzle-orm";
+import {
+  getWorkerDb,
+  schema,
+  validateUrlForSSRF,
+  runWebsiteDiagnostics,
+} from "@leadpulse/infrastructure";
+import { calculateLeadDemandScore } from "@leadpulse/domain";
+import { eq, and, lte } from "drizzle-orm";
 
 const WORKER_ID = `worker-${process.pid}-${Date.now().toString(36)}`;
 const POLL_INTERVAL_MS = parseInt(process.env.WORKER_POLL_INTERVAL_MS || "3000", 10);
@@ -9,7 +15,6 @@ console.log(`[LeadPulse Worker] Initializing with ID: ${WORKER_ID}`);
 
 async function processNextJob() {
   if (!process.env.DATABASE_URL && !process.env.DATABASE_URL_UNPOOLED) {
-    console.warn("[LeadPulse Worker] No DATABASE_URL configured. Sleeping...");
     return;
   }
 
@@ -17,7 +22,6 @@ async function processNextJob() {
     const db = getWorkerDb();
 
     // 1. Claim next pending job using SKIP LOCKED
-    // Transactional atomic lock
     const claimedJobs = await db.transaction(async (tx) => {
       const candidates = await tx
         .select()
@@ -37,7 +41,6 @@ async function processNextJob() {
 
       const job = candidates[0];
 
-      // Mark as PROCESSING
       await tx
         .update(schema.jobsQueue)
         .set({
@@ -51,17 +54,16 @@ async function processNextJob() {
     });
 
     if (claimedJobs.length === 0) {
-      return; // No pending work
+      return; // No pending jobs
     }
 
     const job = claimedJobs[0];
-    console.log(`[LeadPulse Worker] Claimed job ${job.id} (${job.taskType})`);
+    console.log(`[LeadPulse Worker] Processing job ${job.id} (${job.taskType})`);
 
     // 2. Execute Task Handler
     try {
-      await handleJob(job);
+      await handleJob(db, job);
 
-      // Mark COMPLETED
       await db
         .update(schema.jobsQueue)
         .set({
@@ -70,7 +72,7 @@ async function processNextJob() {
         })
         .where(eq(schema.jobsQueue.id, job.id));
 
-      console.log(`[LeadPulse Worker] Successfully completed job ${job.id}`);
+      console.log(`[LeadPulse Worker] Completed job ${job.id}`);
     } catch (jobErr: any) {
       console.error(`[LeadPulse Worker] Job ${job.id} failed:`, jobErr.message);
 
@@ -92,26 +94,79 @@ async function processNextJob() {
   }
 }
 
-async function handleJob(job: any) {
+async function handleJob(db: any, job: any) {
   const payload = job.payload as Record<string, any>;
 
   switch (job.taskType) {
     case "WEBSITE_AUDIT": {
-      const targetUrl = payload.targetUrl;
-      console.log(`[Audit Handler] Starting security pre-flight for ${targetUrl}`);
+      const { businessId, targetUrl } = payload;
+      console.log(`[Audit Worker] Starting diagnostics for ${targetUrl}`);
 
-      // SSRF & DNS Rebinding validation
-      const ssrfCheck = await validateUrlForSSRF(targetUrl);
-      if (!ssrfCheck.isSafe) {
-        throw new Error(`SSRF Blocked: ${ssrfCheck.reason}`);
+      // Run diagnostics with SSRF and SSL checks
+      const auditResult = await runWebsiteDiagnostics(targetUrl);
+
+      // Save audit into website_audits
+      const [newAudit] = await db
+        .insert(schema.websiteAudits)
+        .values({
+          businessId,
+          targetUrl: auditResult.targetUrl,
+          finalUrl: auditResult.finalUrl,
+          httpStatus: auditResult.httpStatus,
+          dnsResolves: auditResult.dnsResolves,
+          sslValid: auditResult.sslValid,
+          sslExpiresAt: auditResult.sslExpiresAt,
+          redirectCount: auditResult.redirectCount,
+          isMobileResponsive: auditResult.isMobileResponsive,
+          lighthousePerformance: String(auditResult.lighthousePerformance),
+          lighthouseAccessibility: String(auditResult.lighthouseAccessibility),
+          lighthouseSeo: String(auditResult.lighthouseSeo),
+          hasContactForm: auditResult.hasContactForm,
+          hasBookingEngine: auditResult.hasBookingEngine,
+          hasWhatsappButton: auditResult.hasWhatsappButton,
+          rawFindings: auditResult.findings,
+          auditCompletedAt: new Date(),
+        })
+        .returning();
+
+      // Retrieve business to recalculate score
+      const [businessRecord] = await db
+        .select()
+        .from(schema.businesses)
+        .where(eq(schema.businesses.id, businessId))
+        .limit(1);
+
+      if (businessRecord) {
+        const updatedScore = calculateLeadDemandScore({
+          business: businessRecord,
+          audit: newAudit,
+        });
+
+        await db
+          .update(schema.leadScores)
+          .set({
+            needFitScore: String(updatedScore.needFitScore),
+            intentScore: String(updatedScore.intentScore),
+            businessFitScore: String(updatedScore.businessFitScore),
+            reachabilityScore: String(updatedScore.reachabilityScore),
+            evidenceConfidence: String(updatedScore.evidenceConfidence),
+            priorityScore: String(updatedScore.priorityScore),
+            demandTier: updatedScore.demandTier,
+            recommendedServices: updatedScore.recommendedServices,
+            scoreReasons: updatedScore.scoreReasons,
+            calculatedAt: new Date(),
+          })
+          .where(eq(schema.leadScores.businessId, businessId));
+
+        console.log(
+          `[Audit Worker] Recalculated demand score for ${businessRecord.name}: Tier ${updatedScore.demandTier} (Score: ${updatedScore.priorityScore}/100)`
+        );
       }
-
-      console.log(`[Audit Handler] Target is safe (${ssrfCheck.resolvedIp}). Audit processing ready.`);
       break;
     }
 
     default:
-      console.log(`[Task Handler] Task type ${job.taskType} acknowledged.`);
+      console.log(`[Worker] Unhandled task type: ${job.taskType}`);
       break;
   }
 }
@@ -124,13 +179,13 @@ async function loop() {
 }
 
 process.on("SIGINT", () => {
-  console.log("[LeadPulse Worker] Received SIGINT. Shutting down gracefully...");
+  console.log("[LeadPulse Worker] Received SIGINT. Shutting down...");
   isRunning = false;
   process.exit(0);
 });
 
 process.on("SIGTERM", () => {
-  console.log("[LeadPulse Worker] Received SIGTERM. Shutting down gracefully...");
+  console.log("[LeadPulse Worker] Received SIGTERM. Shutting down...");
   isRunning = false;
   process.exit(0);
 });
