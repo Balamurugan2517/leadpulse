@@ -6,6 +6,7 @@ export interface MessageDraftResult {
   subject?: string;
   bodyText: string;
   whatsappDeepLink?: string;
+  emailDeepLink?: string;
   previewUrl: string;
   evidenceSummary: string;
 }
@@ -106,15 +107,71 @@ export function generateOutreachDrafts(
         break;
     }
 
+    const emailDeepLink = business.email
+      ? `mailto:${encodeURIComponent(business.email)}?subject=${encodeURIComponent(
+          emailSubject
+        )}&body=${encodeURIComponent(emailBody)}`
+      : undefined;
+
     drafts.push({
       channel: "EMAIL",
       recipientTarget: business.email,
       subject: emailSubject,
       bodyText: emailBody,
+      emailDeepLink,
       previewUrl,
       evidenceSummary: defectEvidence,
     });
   }
 
   return drafts;
+}
+
+export interface CompleteOutreachPack {
+  whatsappCasual: MessageDraftResult;
+  whatsappConsultative: MessageDraftResult;
+  emailFormal?: MessageDraftResult;
+  previewUrl: string;
+  defectEvidence: string;
+}
+
+export function generateCompleteOutreachPack(
+  business: Business,
+  audit: WebsiteAudit | null,
+  score: LeadScore,
+  appBaseUrl = "http://localhost:3000"
+): CompleteOutreachPack {
+  const drafts = generateOutreachDrafts(business, audit, score, appBaseUrl);
+  const whatsappConsultative = drafts.find((d) => d.channel === "WHATSAPP")!;
+  const emailFormal = drafts.find((d) => d.channel === "EMAIL");
+
+  const name = business.name;
+  const cleanPhone = (business.whatsappNumber || business.phone || "").replace(/[^0-9]/g, "");
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+  const queryParams = new URLSearchParams({
+    name,
+    category: business.category || "business",
+    city: business.city || "Chennai",
+    phone: business.whatsappNumber || business.phone || "",
+  }).toString();
+  const previewUrl = `${appBaseUrl}/preview/${slug}?${queryParams}`;
+
+  // Casual 2-sentence WhatsApp opener
+  const casualBody = `Hi ${name} team! Put together a free 1-sec mobile website prototype for your business: ${previewUrl}. Would love your feedback!`;
+  const whatsappCasual: MessageDraftResult = {
+    channel: "WHATSAPP",
+    recipientTarget: business.whatsappNumber || business.phone || "",
+    bodyText: casualBody,
+    whatsappDeepLink: cleanPhone ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(casualBody)}` : undefined,
+    previewUrl,
+    evidenceSummary: whatsappConsultative.evidenceSummary,
+  };
+
+  return {
+    whatsappCasual,
+    whatsappConsultative,
+    emailFormal,
+    previewUrl,
+    defectEvidence: whatsappConsultative.evidenceSummary,
+  };
 }
