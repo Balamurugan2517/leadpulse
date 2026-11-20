@@ -69,14 +69,16 @@ export default function HomePage() {
 
             {/* Quick Free Audit Form */}
             <div id="audit" className="mt-10 max-w-xl mx-auto">
-              <form className="flex flex-col sm:flex-row gap-3 p-2 rounded-xl bg-card border border-border shadow-xl">
+              <form action="/dashboard/audit-lab" method="GET" className="flex flex-col sm:flex-row gap-3 p-2 rounded-xl bg-card border border-border shadow-xl">
                 <input
                   type="text"
-                  placeholder="Enter your website URL or business name..."
+                  name="url"
+                  required
+                  placeholder="Enter your website URL (e.g. https://yourbusiness.in)..."
                   className="flex-1 px-4 py-3 bg-transparent text-sm text-foreground focus:outline-none placeholder:text-muted-foreground"
                 />
                 <button
-                  type="button"
+                  type="submit"
                   className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors shadow-md"
                 >
                   Get Free Audit
@@ -84,7 +86,7 @@ export default function HomePage() {
                 </button>
               </form>
               <p className="mt-3 text-xs text-muted-foreground">
-                Zero sales pressure. Receive an evidence-backed 1-page health report in your inbox.
+                Instant real-time security, mobile speed, and conversion CTA analysis.
               </p>
             </div>
           </div>

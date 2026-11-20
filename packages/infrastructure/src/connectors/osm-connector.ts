@@ -7,7 +7,7 @@ export interface OSMDiscoveryOptions {
   limit?: number;
 }
 
-// Bounding boxes for prominent Chennai zones [minLat, minLon, maxLat, maxLon]
+// Bounding boxes for prominent Chennai zones and major Indian cities [minLat, minLon, maxLat, maxLon]
 export const CHENNAI_ZONE_BBOX: Record<string, [number, number, number, number]> = {
   ALL_CHENNAI: [12.90, 80.12, 13.20, 80.32],
   ADYAR: [12.99, 80.24, 13.02, 80.27],
@@ -16,6 +16,16 @@ export const CHENNAI_ZONE_BBOX: Record<string, [number, number, number, number]>
   VELACHERY: [12.96, 80.20, 12.99, 80.23],
   MYLAPORE: [13.02, 80.25, 13.05, 80.28],
   TAMBARAM: [12.91, 80.10, 12.94, 80.13],
+  PORUR: [13.02, 80.14, 13.05, 80.18],
+  NUNGAMBAKKAM: [13.05, 80.23, 13.07, 80.25],
+  COIMBATORE: [10.95, 76.90, 11.08, 77.05],
+  MADURAI: [9.88, 78.08, 10.00, 78.18],
+  TRICHY: [10.75, 78.65, 10.85, 78.75],
+  SALEM: [11.60, 78.10, 11.70, 78.20],
+  BANGALORE: [12.85, 77.50, 13.10, 77.75],
+  HYDERABAD: [17.30, 78.35, 17.55, 78.60],
+  MUMBAI: [18.90, 72.75, 19.30, 73.00],
+  DELHI: [28.50, 77.05, 28.85, 77.35],
 };
 
 const CATEGORY_TAG_FILTERS: Record<string, string[]> = {

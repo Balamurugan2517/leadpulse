@@ -21,6 +21,7 @@ import {
 } from "../../actions/discovery-actions";
 import { generateBrowserBookmarkletCode } from "@leadpulse/infrastructure";
 import { MultiChannelConnectors } from "./multi-channel-connectors";
+import { BookmarkletButton } from "./bookmarklet-button";
 
 interface DiscoveryPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -41,13 +42,21 @@ export default async function DiscoveryStudioPage({ searchParams }: DiscoveryPag
   const bookmarkletCode = generateBrowserBookmarkletCode("http://localhost:3000");
 
   const localities = [
-    { label: "All Chennai", value: "ALL_CHENNAI" },
-    { label: "Anna Nagar", value: "ANNA_NAGAR" },
-    { label: "Adyar", value: "ADYAR" },
-    { label: "T. Nagar", value: "T_NAGAR" },
-    { label: "Velachery", value: "VELACHERY" },
-    { label: "Mylapore", value: "MYLAPORE" },
-    { label: "Tambaram", value: "TAMBARAM" },
+    { label: "All Chennai (Metro)", value: "ALL_CHENNAI" },
+    { label: "Adyar & Besant Nagar", value: "ADYAR" },
+    { label: "Anna Nagar & Kilpauk", value: "ANNA_NAGAR" },
+    { label: "T. Nagar & West Mambalam", value: "T_NAGAR" },
+    { label: "Velachery & OMR", value: "VELACHERY" },
+    { label: "Mylapore & Alwarpet", value: "MYLAPORE" },
+    { label: "Tambaram & Chromepet", value: "TAMBARAM" },
+    { label: "Porur & Ramapuram", value: "PORUR" },
+    { label: "Nungambakkam & Kodambakkam", value: "NUNGAMBAKKAM" },
+    { label: "Coimbatore (District Hub)", value: "COIMBATORE" },
+    { label: "Madurai (Temple City)", value: "MADURAI" },
+    { label: "Trichy (Central TN)", value: "TRICHY" },
+    { label: "Salem (Industrial Hub)", value: "SALEM" },
+    { label: "Bangalore (Karnataka Hub)", value: "BANGALORE" },
+    { label: "Hyderabad (Telangana Hub)", value: "HYDERABAD" },
   ];
 
   const categories = [
@@ -142,19 +151,7 @@ export default async function DiscoveryStudioPage({ searchParams }: DiscoveryPag
           </p>
 
           <div className="pt-2">
-            <a
-              href={bookmarkletCode}
-              onClick={(e) => {
-                // If clicked, copy code or prompt
-                navigator.clipboard.writeText(bookmarkletCode);
-                alert("Bookmarklet link copied! Drag it to your bookmarks bar or paste into a new bookmark.");
-              }}
-              className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold shadow-md hover:bg-primary/90 transition-all cursor-grab active:cursor-grabbing"
-              title="Drag this button to your bookmarks bar"
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              + LeadPulse Capture (Drag Me)
-            </a>
+            <BookmarkletButton bookmarkletCode={bookmarkletCode} />
           </div>
 
           <p className="text-[10px] text-muted-foreground text-center">

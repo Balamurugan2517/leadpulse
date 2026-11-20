@@ -22,7 +22,9 @@ export function calculateLeadDemandScore(input: ScoreCalculationInput): LeadScor
   let needFit = 0;
   const hasWebsite = Boolean(business.sourceUrl || (audit && audit.targetUrl));
 
-  if (!hasWebsite || audit?.rawFindings.some((f) => f.code === "NO_WEBSITE")) {
+  const hasNoWebsiteFinding = Array.isArray(audit?.rawFindings) && audit.rawFindings.some((f) => f.code === "NO_WEBSITE");
+
+  if (!hasWebsite || hasNoWebsiteFinding) {
     needFit += 70; // High urgent need: no official digital presence
     reasons.push("No official business website detected");
     recommendedServices.push("WEBSITE_DEVELOPMENT");
@@ -121,7 +123,7 @@ export function calculateLeadDemandScore(input: ScoreCalculationInput): LeadScor
     "contractor",
   ];
 
-  const catLower = business.category.toLowerCase();
+  const catLower = (business.category || "").toLowerCase();
   if (primeCategories.some((prime) => catLower.includes(prime))) {
     businessFit = 95;
     reasons.push(`High-margin target SME sector (${business.category})`);
