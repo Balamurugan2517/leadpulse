@@ -5,4 +5,7 @@ export * from "./repositories/business-repository";
 export * from "./connectors/osm-connector";
 export * from "./connectors/rss-connector";
 export * from "./connectors/quick-capture";
+export * from "./connectors/google-places-connector";
+export * from "./connectors/youtube-connector";
+export * from "./connectors/social-connector";
 export * from "./audit/diagnostics-engine";

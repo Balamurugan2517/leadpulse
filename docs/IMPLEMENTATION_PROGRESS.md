@@ -1,7 +1,7 @@
 # LeadPulse AI - Implementation Progress & Governance Register
 
 **Last Updated:** 2026-11-07  
-**Current Phase:** Phase 5 - Keyword Taxonomy & Multi-Dimensional Scoring (COMPLETED)
+**Current Phase:** Phase 6 - Social & Commercial Connectors (COMPLETED)
 
 ---
 
@@ -15,8 +15,8 @@
 | **Phase 3** | **Free Discovery Engine & Quick-Capture** | **COMPLETED & VERIFIED** | OpenStreetMap (Overpass API) adapter with Chennai zone bounding boxes (Adyar, Anna Nagar, T. Nagar, Velachery, Mylapore, Tambaram); RSS public buying signals & RFP feed reader; 1-Click Browser Quick-Capture bookmarklet; Discovery Studio UI (`/dashboard/discovery`); Quick-Capture popup (`/dashboard/discovery/quick-capture`); **18/18 Vitest tests passed**; production build passed. |
 | **Phase 4** | **Website Audit Lab & SSRF Defenses** | **COMPLETED & VERIFIED** | Automated Technical Diagnostics Engine (`runWebsiteDiagnostics`); TLS/SSL certificate inspector with expiry date calculation; redirect following with in-flight SSRF check; mobile viewport and conversion CTA detection (forms, WhatsApp links, phone links); worker job consumer with Neon atomic `SKIP LOCKED` processing and automatic score recalculation; Website Audit Lab UI (`/dashboard/audit-lab`) with instant diagnostics scanner; **21/21 Vitest tests passed**; production build passed. |
 | **Phase 5** | **Keyword Taxonomy & Multi-Dimensional Scoring** | **COMPLETED & VERIFIED** | 5 core keyword packs (`NO_WEBSITE`, `BROKEN_WEBSITE`, `OUTDATED_WEBSITE`, `LOW_REVIEWS`, `NEGATIVE_SENTIMENT`) + `BUYING_INTENT` and `NEGATIVE_EXCLUSIONS`; Default Service Catalog with INR pricing and local niches; `matchKeywordsInText` intent engine; interactive Keyword Taxonomy Studio and Live Score Simulator UI (`/dashboard/keywords`); **28/28 Vitest tests passed**; production build passed. |
-| **Phase 6** | **Social & Commercial Connectors** | **READY TO START** | Google Places official API adapter, YouTube Data API connector, manual-assisted capture for Instagram/LinkedIn |
-| **Phase 7** | **Personalized Outreach Desk & WhatsApp Engine** | Pending | Evidence-based message drafter, WhatsApp `wa.me` deep link generator, review desk, suppression list |
+| **Phase 6** | **Social & Commercial Connectors** | **COMPLETED & VERIFIED** | Google Places API adapter with 30-day compliance caching; YouTube Data API local educator/creator connector; Social profile assisted extractor for Meta (Instagram/Facebook) and LinkedIn with link-aggregator / Linktree detection; MultiChannelConnectors tabbed UI in `/dashboard/discovery`; **39/39 Vitest tests passed**; production build passed. |
+| **Phase 7** | **Personalized Outreach Desk & WhatsApp Engine** | **READY TO START** | Evidence-based message drafter, WhatsApp `wa.me` deep link generator, review desk, suppression list |
 | **Phase 8** | **Sales Pipeline, Proposals & Revenue Tracking** | Pending | Kanban board, online/in-person meeting logger, deal won/lost handler, proposal builder, MRR tracking |
 | **Phase 9** | **Hardening, E2E Testing & Production Readiness** | Pending | Security penetration suite, load test with 10k synthetic leads, backup verification, deployment build check |
 
@@ -51,3 +51,14 @@
   - Negative exclusions verified: False positives (internships, student projects, tutorials) cleanly zeroed out.
 * **Monorepo Typecheck:** `npm run typecheck` $\rightarrow$ Passed across all 6 workspaces with **0 errors**.
 * **Next.js Production Build:** `npm run build --workspace=apps/web` $\rightarrow$ Passed with static and dynamic generation for all 11 routes (including new `/dashboard/keywords`).
+
+---
+
+## 4. Phase 6 Verification Evidence
+* **Automated Unit Tests:** `npx vitest run` $\rightarrow$ **39 passed (100% success)**.
+  - `isIndependentWebsite` tested across valid standalone domains vs social media walled gardens (Facebook, Instagram, LinkedIn, YouTube) and link aggregators (Linktree, Bio.link).
+  - Google Places API connector verified with 30-day compliance caching conforming to Google Places API Terms of Service, phone normalization, and CRM lead mapping.
+  - YouTube Data API connector verified: Channel description parsing, 10-digit Indian mobile number extraction, missing website gap detection, and lead transformation.
+  - Social profile assisted extractor verified: Platform classification (`META_INSTA`, `META_FB`, `LINKEDIN`), handle extraction, Linktree / aggregator diagnosis, direct WhatsApp link detection, and recommended service assignment (`WEBSITE_DEVELOPMENT` / `ONLINE_BOOKING_SYSTEM`).
+* **Monorepo Typecheck:** `npm run typecheck` $\rightarrow$ Passed across all 6 workspaces with **0 errors**.
+* **Next.js Production Build:** `npm run build --workspace=apps/web` $\rightarrow$ Passed with static and dynamic generation for all 11 routes with extended `<MultiChannelConnectors />` in `/dashboard/discovery`.

@@ -123,3 +123,56 @@ export async function quickCaptureSubmitAction(formData: FormData) {
   revalidatePath("/dashboard/leads");
   return { success: true };
 }
+
+export async function runGooglePlacesDiscoveryAction(query: string, apiKey?: string) {
+  const { searchGooglePlaces, convertGooglePlaceToLead } = await import("@leadpulse/infrastructure");
+  const places = await searchGooglePlaces({
+    query,
+    apiKey: apiKey || process.env.GOOGLE_PLACES_API_KEY,
+  });
+
+  return places.map((place) => {
+    const lead = convertGooglePlaceToLead(place, DEFAULT_WORKSPACE_ID);
+    const score = calculateLeadDemandScore({ business: lead as any });
+    return {
+      place,
+      lead,
+      score,
+    };
+  });
+}
+
+export async function runYouTubeDiscoveryAction(query: string, apiKey?: string) {
+  const { searchYouTubeChannels, convertYouTubeChannelToLead } = await import("@leadpulse/infrastructure");
+  const channels = await searchYouTubeChannels({
+    query,
+    apiKey: apiKey || process.env.YOUTUBE_API_KEY,
+  });
+
+  return channels.map((channel) => {
+    const lead = convertYouTubeChannelToLead(channel, DEFAULT_WORKSPACE_ID);
+    const score = calculateLeadDemandScore({ business: lead as any });
+    return {
+      channel,
+      lead,
+      score,
+    };
+  });
+}
+
+export async function analyzeSocialProfileAction(params: {
+  profileUrl: string;
+  bioText: string;
+  explicitName?: string;
+}) {
+  const { analyzeSocialProfile, convertSocialProfileToLead } = await import("@leadpulse/infrastructure");
+  const analysis = analyzeSocialProfile(params);
+  const lead = convertSocialProfileToLead(analysis, DEFAULT_WORKSPACE_ID, params.explicitName);
+  const score = calculateLeadDemandScore({ business: lead as any });
+
+  return {
+    analysis,
+    lead,
+    score,
+  };
+}

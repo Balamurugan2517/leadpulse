@@ -20,6 +20,7 @@ import {
   getIntentSignalsAction,
 } from "../../actions/discovery-actions";
 import { generateBrowserBookmarkletCode } from "@leadpulse/infrastructure";
+import { MultiChannelConnectors } from "./multi-channel-connectors";
 
 interface DiscoveryPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -255,6 +256,9 @@ export default async function DiscoveryStudioPage({ searchParams }: DiscoveryPag
           })}
         </div>
       </div>
+
+      {/* Multi-Channel Connectors (Google Places, YouTube & Social Profile Analysis) */}
+      <MultiChannelConnectors />
 
       {/* Public Opportunity / RFP Intent Feeds Section */}
       <div className="p-6 rounded-2xl border border-border bg-card shadow-sm space-y-4">
