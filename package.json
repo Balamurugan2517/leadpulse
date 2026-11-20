@@ -29,5 +29,8 @@
     "prettier": "^3.3.3",
     "typescript": "5.8.2",
     "vitest": "^2.1.4"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.10"
   }
 }
