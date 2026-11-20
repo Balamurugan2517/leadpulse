@@ -1,7 +1,7 @@
 # LeadPulse AI - Implementation Progress & Governance Register
 
 **Last Updated:** 2026-11-07  
-**Current Phase:** Phase 7 - Personalized Outreach Desk & WhatsApp Engine (COMPLETED)
+**Current Phase:** Phase 8 - Sales Pipeline, Proposals & Revenue Tracking (COMPLETED)
 
 ---
 
@@ -17,9 +17,8 @@
 | **Phase 5** | **Keyword Taxonomy & Multi-Dimensional Scoring** | **COMPLETED & VERIFIED** | 5 core keyword packs (`NO_WEBSITE`, `BROKEN_WEBSITE`, `OUTDATED_WEBSITE`, `LOW_REVIEWS`, `NEGATIVE_SENTIMENT`) + `BUYING_INTENT` and `NEGATIVE_EXCLUSIONS`; Default Service Catalog with INR pricing and local niches; `matchKeywordsInText` intent engine; interactive Keyword Taxonomy Studio and Live Score Simulator UI (`/dashboard/keywords`); **28/28 Vitest tests passed**; production build passed. |
 | **Phase 6** | **Social & Commercial Connectors** | **COMPLETED & VERIFIED** | Google Places API adapter with 30-day compliance caching; YouTube Data API local educator/creator connector; Social profile assisted extractor for Meta (Instagram/Facebook) and LinkedIn with link-aggregator / Linktree detection; MultiChannelConnectors tabbed UI in `/dashboard/discovery`; **39/39 Vitest tests passed**; production build passed. |
 | **Phase 7** | **Personalized Outreach Desk & WhatsApp Engine** | **COMPLETED & VERIFIED** | `generateCompleteOutreachPack` composer; WhatsApp consultative & casual openers; `wa.me` sanitized deep links; `mailto:` structured proposal links; 1-click live prototype preview integration (`/preview/[slug]`); Outreach Desk UI (`/dashboard/outreach`); pipeline acknowledgment (`DISCOVERED` $\rightarrow$ `CONTACTED`); **43/43 Vitest tests passed**; production build passed. |
-| **Phase 8** | **Sales Pipeline, Proposals & Revenue Tracking** | **READY TO START** | Kanban board, online/in-person meeting logger, deal won/lost handler, proposal builder, MRR tracking |
-| **Phase 8** | **Sales Pipeline, Proposals & Revenue Tracking** | Pending | Kanban board, online/in-person meeting logger, deal won/lost handler, proposal builder, MRR tracking |
-| **Phase 9** | **Hardening, E2E Testing & Production Readiness** | Pending | Security penetration suite, load test with 10k synthetic leads, backup verification, deployment build check |
+| **Phase 8** | **Sales Pipeline, Proposals & Revenue Tracking** | **COMPLETED & VERIFIED** | 5-stage Kanban board (`/dashboard/pipeline`); Financial KPI telemetry (Pipeline Value, Closed Won, MRR); interaction/meeting logger modal; itemized proposal & quotation generator (`/dashboard/pipeline/proposal/[id]`); **46/46 Vitest tests passed**; production build passed. |
+| **Phase 9** | **Hardening, E2E Testing & Production Readiness** | **READY TO START** | Security penetration suite, load test with 5k+ synthetic leads, backup verification, deployment build check |
 
 ---
 
@@ -74,3 +73,13 @@
   - Live prototype preview URL (`/preview/[slug]`) verified with parameter preservation.
 * **Monorepo Typecheck:** `npm run typecheck` $\rightarrow$ Passed across all 6 workspaces with **0 errors**.
 * **Next.js Production Build:** `npm run build --workspace=apps/web` $\rightarrow$ Passed with static and dynamic generation for all 12 routes (including new `/dashboard/outreach`).
+
+---
+
+## 6. Phase 8 Verification Evidence
+* **Automated Unit Tests:** `npx vitest run` $\rightarrow$ **46 passed (100% success)**.
+  - Revenue metrics engine verified: Correctly computes active pipeline value in INR while isolating Closed Won revenue and Closed Lost deals.
+  - MRR projection calculations validated against signed client contracts.
+  - Proposal and quotation generation engine validated: 50% milestone advance deposit and balance calculation, delivery timeline, optional monthly maintenance retainer, and printable export readiness.
+* **Monorepo Typecheck:** `npm run typecheck` $\rightarrow$ Passed across all 6 workspaces with **0 errors**.
+* **Next.js Production Build:** `npm run build --workspace=apps/web` $\rightarrow$ Passed with static and dynamic generation for all 13 routes (including `/dashboard/pipeline` and `/dashboard/pipeline/proposal/[id]`).
