@@ -16,12 +16,13 @@ const DEFAULT_WORKSPACE_ID = "00000000-0000-0000-0000-000000000001";
 export async function runOsmDiscoveryAction(options: {
   category: "CLINIC" | "EDUCATION" | "RESTAURANT" | "PROFESSIONAL" | "SERVICES" | "ALL";
   locality: string;
+  limit?: number;
 }) {
   const result = await executeOsmDiscovery({
     workspaceId: DEFAULT_WORKSPACE_ID,
     category: options.category,
     locality: options.locality,
-    limit: 25,
+    limit: options.limit || 25,
   });
 
   // Calculate preview scores for each discovered lead

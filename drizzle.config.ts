@@ -1,4 +1,4 @@
-﻿
+
 import "dotenv/config";
 import { defineConfig } from "drizzle-kit";
 
@@ -12,9 +12,9 @@ export default defineConfig({
   // Database dialect
   dialect: "postgresql",
 
-  // Use Neon direct (unpooled) connection for migrations
+  // Use Neon direct (unpooled) connection for migrations if available, or standard DATABASE_URL
   dbCredentials: {
-    url: process.env.DATABASE_URL_UNPOOLED!,
+    url: (process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL)!,
   },
 
   // Migration safety and logging

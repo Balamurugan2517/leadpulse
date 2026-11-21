@@ -145,11 +145,15 @@ export async function getLeadsForOutreachDesk(tierFilter?: string) {
         audit: item.audit,
       });
 
+      const appBaseUrl =
+        process.env.NEXT_PUBLIC_APP_URL ||
+        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+
       const outreachPack = generateCompleteOutreachPack(
         item.business,
         item.audit,
         score,
-        process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+        appBaseUrl
       );
 
       return {

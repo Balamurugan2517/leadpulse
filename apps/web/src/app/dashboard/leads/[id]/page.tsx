@@ -37,11 +37,15 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
   const slug = business.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
   // Generate customized message drafts with prototype preview link
+  const appBaseUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+
   const drafts = generateOutreachDrafts(
     business as any,
     audits?.[0] as any || null,
     score as any || { needFitScore: 50, scoreReasons: [] },
-    "http://localhost:3000"
+    appBaseUrl
   );
 
   const whatsappDraft = drafts.find((d) => d.channel === "WHATSAPP");
@@ -193,7 +197,32 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
 
           {/* Contact & Location Details */}
           <div className="p-6 rounded-2xl border border-border bg-card shadow-sm space-y-4">
-            <h3 className="font-bold text-base">Business Intelligence Details</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold text-base">Business Intelligence Details</h3>
+              {(() => {
+                const mapsQuery = encodeURIComponent(
+                  [business.name, business.addressLine1, business.city, business.state]
+                    .filter(Boolean)
+                    .join(", ")
+                );
+                const gmapsUrl = business.latitude && business.longitude
+                  ? `https://www.google.com/maps?q=${business.latitude},${business.longitude}`
+                  : `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
+
+                return (
+                  <a
+                    href={gmapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground transition-all shadow-sm"
+                  >
+                    <MapPin className="h-3.5 w-3.5" />
+                    Locate on Google Maps ↗
+                  </a>
+                );
+              })()}
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div className="flex items-center gap-2.5 text-muted-foreground">
                 <Phone className="h-4 w-4 text-primary shrink-0" />
@@ -214,6 +243,39 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
                 <MapPin className="h-4 w-4 text-primary shrink-0" />
                 <span>Location: <strong className="text-foreground">{business.addressLine1 || business.city}</strong></span>
               </div>
+            </div>
+
+            {/* Google Maps Location Preview Callout */}
+            <div className="p-4 rounded-xl bg-muted/20 border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="space-y-0.5">
+                <span className="font-semibold text-foreground flex items-center gap-1.5">
+                  <MapPin className="h-4 w-4 text-red-500" />
+                  Physical Address & Geolocation
+                </span>
+                <p className="text-muted-foreground">
+                  {[business.name, business.addressLine1, business.city, business.state, business.postalCode]
+                    .filter(Boolean)
+                    .join(", ")}
+                </p>
+              </div>
+
+              <a
+                href={
+                  business.latitude && business.longitude
+                    ? `https://www.google.com/maps?q=${business.latitude},${business.longitude}`
+                    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                        [business.name, business.addressLine1, business.city, business.state]
+                          .filter(Boolean)
+                          .join(", ")
+                      )}`
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-card border border-border hover:bg-muted font-medium text-foreground transition-colors shrink-0"
+              >
+                Open in Maps App
+                <ExternalLink className="h-3 w-3 text-muted-foreground" />
+              </a>
             </div>
           </div>
         </div>

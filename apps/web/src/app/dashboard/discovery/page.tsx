@@ -22,6 +22,7 @@ import {
 import { generateBrowserBookmarkletCode } from "@leadpulse/infrastructure";
 import { MultiChannelConnectors } from "./multi-channel-connectors";
 import { BookmarkletButton } from "./bookmarklet-button";
+import { DiscoverySearchForm } from "./discovery-search-form";
 
 interface DiscoveryPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -31,41 +32,20 @@ export default async function DiscoveryStudioPage({ searchParams }: DiscoveryPag
   const sParams = await searchParams;
   const selectedLocality = (typeof sParams.locality === "string" ? sParams.locality : "ALL_CHENNAI").toUpperCase();
   const selectedCategory = (typeof sParams.category === "string" ? sParams.category : "CLINIC").toUpperCase() as any;
+  const selectedLimit = typeof sParams.limit === "string" ? Math.min(parseInt(sParams.limit, 10), 1000) : 25;
 
   // Run discovery query
   const discoveryResult = await runOsmDiscoveryAction({
     category: selectedCategory,
     locality: selectedLocality,
+    limit: selectedLimit,
   });
 
   const intentSignals = await getIntentSignalsAction();
-  const bookmarkletCode = generateBrowserBookmarkletCode("http://localhost:3000");
-
-  const localities = [
-    { label: "All Chennai (Metro)", value: "ALL_CHENNAI" },
-    { label: "Adyar & Besant Nagar", value: "ADYAR" },
-    { label: "Anna Nagar & Kilpauk", value: "ANNA_NAGAR" },
-    { label: "T. Nagar & West Mambalam", value: "T_NAGAR" },
-    { label: "Velachery & OMR", value: "VELACHERY" },
-    { label: "Mylapore & Alwarpet", value: "MYLAPORE" },
-    { label: "Tambaram & Chromepet", value: "TAMBARAM" },
-    { label: "Porur & Ramapuram", value: "PORUR" },
-    { label: "Nungambakkam & Kodambakkam", value: "NUNGAMBAKKAM" },
-    { label: "Coimbatore (District Hub)", value: "COIMBATORE" },
-    { label: "Madurai (Temple City)", value: "MADURAI" },
-    { label: "Trichy (Central TN)", value: "TRICHY" },
-    { label: "Salem (Industrial Hub)", value: "SALEM" },
-    { label: "Bangalore (Karnataka Hub)", value: "BANGALORE" },
-    { label: "Hyderabad (Telangana Hub)", value: "HYDERABAD" },
-  ];
-
-  const categories = [
-    { label: "Dental & Clinics", value: "CLINIC" },
-    { label: "Tuition & Coaching", value: "EDUCATION" },
-    { label: "Restaurants & Cafes", value: "RESTAURANT" },
-    { label: "CA & Professionals", value: "PROFESSIONAL" },
-    { label: "Salons & Services", value: "SERVICES" },
-  ];
+  const appBaseUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+  const bookmarkletCode = generateBrowserBookmarkletCode(appBaseUrl);
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
@@ -73,7 +53,7 @@ export default async function DiscoveryStudioPage({ searchParams }: DiscoveryPag
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Discovery Studio</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
-          Scan open geographical data and public syndication feeds across Chennai with zero paid API subscriptions.
+          Scan open geographical data and public syndication feeds across PAN India with zero paid API subscriptions.
         </p>
       </div>
 
@@ -91,53 +71,11 @@ export default async function DiscoveryStudioPage({ searchParams }: DiscoveryPag
             </span>
           </div>
 
-          <form method="GET" className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                <MapPin className="h-3.5 w-3.5 text-primary" />
-                Target Locality in Chennai
-              </label>
-              <select
-                name="locality"
-                defaultValue={selectedLocality}
-                className="w-full px-3 py-2 bg-muted/30 border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-              >
-                {localities.map((loc) => (
-                  <option key={loc.value} value={loc.value}>
-                    {loc.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                <Building2 className="h-3.5 w-3.5 text-primary" />
-                Target Industry / Category
-              </label>
-              <select
-                name="category"
-                defaultValue={selectedCategory}
-                className="w-full px-3 py-2 bg-muted/30 border border-border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-              >
-                {categories.map((cat) => (
-                  <option key={cat.value} value={cat.value}>
-                    {cat.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="sm:col-span-2 pt-2">
-              <button
-                type="submit"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors shadow-sm"
-              >
-                <Compass className="h-4 w-4" />
-                Run Discovery Scan
-              </button>
-            </div>
-          </form>
+          <DiscoverySearchForm
+            initialLocality={selectedLocality}
+            initialCategory={selectedCategory}
+            initialLimit={selectedLimit}
+          />
         </div>
 
         {/* 1-Click Browser Bookmarklet Card */}
@@ -220,10 +158,17 @@ export default async function DiscoveryStudioPage({ searchParams }: DiscoveryPag
                     </span>
                   </div>
 
-                  <p className="text-xs text-muted-foreground mt-1 flex items-center gap-4">
-                    <span>📍 {b.addressLine1}</span>
-                    <span>📞 {b.phone || "No phone listed"}</span>
-                    <span>🌐 {b.sourceUrl ? b.sourceUrl : "No Website (Gap Detected)"}</span>
+                  <p className="text-xs text-muted-foreground mt-1 flex flex-wrap items-center gap-x-4 gap-y-1">
+                    <span>📍 {b.addressLine1}, {b.city}, {b.state}</span>
+                    <span>📞 <strong className="text-foreground">{b.phone || "No phone listed"}</strong></span>
+                    {b.email && <span>✉️ {b.email}</span>}
+                    <span>🌐 {b.sourceUrl ? (
+                      <a href={b.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                        {b.sourceUrl}
+                      </a>
+                    ) : (
+                      <span className="text-amber-500 font-semibold">No Website (High Demand Gap)</span>
+                    )}</span>
                   </p>
                 </div>
 

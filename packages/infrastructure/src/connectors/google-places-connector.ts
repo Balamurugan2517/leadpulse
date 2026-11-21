@@ -198,6 +198,96 @@ export async function getGooglePlaceDetails(
 }
 
 /**
+ * Generates query-aware, niche-accurate Google Places leads for free mock mode (Issue 6, ENH-005)
+ */
+function generateQueryAwareGooglePlaces(query: string): GooglePlaceResult[] {
+  const norm = query.toLowerCase();
+
+  // Detect niche
+  let niche = "Local Business";
+  let types = ["point_of_interest", "establishment"];
+  let oppText = "No official website found on Google Places profile. Needs conversion-focused micro-site.";
+
+  if (norm.includes("spa") || norm.includes("massage") || norm.includes("wellness")) {
+    niche = "Day Spa & Wellness";
+    types = ["spa", "beauty_salon", "health"];
+    oppText = "High demand local spa with NO online booking portal. Losing appointments to manual WhatsApp chat.";
+  } else if (norm.includes("salon") || norm.includes("hair") || norm.includes("beauty")) {
+    niche = "Unisex Salon & Beauty Studio";
+    types = ["hair_care", "beauty_salon"];
+    oppText = "Popular salon relying only on walk-ins and phone calls. Needs automated service menu & calendar.";
+  } else if (norm.includes("dental") || norm.includes("dentist") || norm.includes("clinic") || norm.includes("doctor")) {
+    niche = "Dental & Multi-Speciality Clinic";
+    types = ["dentist", "health", "doctor"];
+    oppText = "Active clinic with strong reviews but zero independent website. Prime candidate for patient portal.";
+  } else if (norm.includes("tuition") || norm.includes("coaching") || norm.includes("academy") || norm.includes("maths")) {
+    niche = "Tuition & Coaching Academy";
+    types = ["school", "tutoring"];
+    oppText = "Coaching institute lacking digital student enrolment and syllabus showcase.";
+  } else if (norm.includes("cafe") || norm.includes("restaurant") || norm.includes("bakery") || norm.includes("food")) {
+    niche = "Artisanal Cafe & Dining";
+    types = ["restaurant", "cafe", "food"];
+    oppText = "Dining establishment with high footfall but no digital mobile menu or reservation engine.";
+  } else if (norm.includes("ca") || norm.includes("tax") || norm.includes("accountant") || norm.includes("gst")) {
+    niche = "Chartered Accountants & Tax Firm";
+    types = ["accounting", "finance"];
+    oppText = "Professional advisory firm with no official client portal or tax compliance advisory site.";
+  }
+
+  // Extract clean locality and city name from query
+  const cleanLoc = query
+    .replace(/(clinics|dentists|spa|salons|tuition|cafes|restaurants|in|at|near|best|top)/gi, "")
+    .trim() || "Local Hub";
+
+  const capitalizedLoc = cleanLoc.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+
+  return [
+    {
+      placeId: `ChIJ_syn_${Date.now()}_1`,
+      name: `${capitalizedLoc} ${niche} Centre`,
+      formattedAddress: `24, Main Road, ${capitalizedLoc}, India`,
+      phone: "+91 98401 55678",
+      website: undefined,
+      rating: 4.8,
+      userRatingsTotal: 96,
+      latitude: 13.08,
+      longitude: 80.20,
+      types,
+      hasOfficialWebsite: false,
+      opportunitySummary: oppText,
+    },
+    {
+      placeId: `ChIJ_syn_${Date.now()}_2`,
+      name: `Royal ${niche} Lounge`,
+      formattedAddress: `12, 2nd Avenue, ${capitalizedLoc}, India`,
+      phone: "+91 98402 77890",
+      website: undefined,
+      rating: 4.6,
+      userRatingsTotal: 64,
+      latitude: 13.09,
+      longitude: 80.21,
+      types,
+      hasOfficialWebsite: false,
+      opportunitySummary: "Only has basic phone listing. Needs brand visibility and Google Business profile optimization.",
+    },
+    {
+      placeId: `ChIJ_syn_${Date.now()}_3`,
+      name: `Elite ${niche} & Care`,
+      formattedAddress: `5, Market Road, ${capitalizedLoc}, India`,
+      phone: "+91 94440 33445",
+      website: `https://www.facebook.com/${cleanLoc.replace(/\s+/g, "")}${niche.split(" ")[0].toLowerCase()}`,
+      rating: 4.2,
+      userRatingsTotal: 31,
+      latitude: 13.07,
+      longitude: 80.19,
+      types,
+      hasOfficialWebsite: false,
+      opportunitySummary: "Relies entirely on Facebook page. Needs high-converting standalone web presence.",
+    },
+  ];
+}
+
+/**
  * Searches Google Places by text query (e.g. "clinics in Anna Nagar Chennai").
  */
 export async function searchGooglePlaces(params: {
@@ -208,18 +298,23 @@ export async function searchGooglePlaces(params: {
 }): Promise<GooglePlaceResult[]> {
   const { query, location, radiusMeters = 5000, apiKey } = params;
 
-  // If no API key or MOCK, return mock matches filtered by query
+  // If no API key or MOCK, return query-aware matches
   if (!apiKey || apiKey === "MOCK" || apiKey.trim() === "") {
     const normalized = query.toLowerCase();
-    const matches = MOCK_CHENNAI_PLACES.filter((p) => {
+    const exactMatches = MOCK_CHENNAI_PLACES.filter((p) => {
       return (
         p.name.toLowerCase().includes(normalized) ||
         p.formattedAddress?.toLowerCase().includes(normalized) ||
-        p.types?.some((t) => t.toLowerCase().includes(normalized)) ||
-        normalized.includes("chennai")
+        p.types?.some((t) => t.toLowerCase().includes(normalized))
       );
     });
-    return matches.length > 0 ? matches : MOCK_CHENNAI_PLACES;
+
+    if (exactMatches.length > 0) {
+      return exactMatches;
+    }
+
+    // Return realistic query-aware leads matching the exact requested niche & area
+    return generateQueryAwareGooglePlaces(query);
   }
 
   try {

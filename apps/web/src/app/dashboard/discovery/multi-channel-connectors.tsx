@@ -159,12 +159,12 @@ export function MultiChannelConnectors() {
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="sm:col-span-2 space-y-1">
-              <label className="text-xs font-semibold">Search Query / Niche in Chennai</label>
+              <label className="text-xs font-semibold">Search Query / Niche (PAN India)</label>
               <input
                 type="text"
                 value={placesQuery}
                 onChange={(e) => setPlacesQuery(e.target.value)}
-                placeholder="e.g. Dentists in Anna Nagar Chennai"
+                placeholder="e.g. Spa in Villivakkam, Dentists in Bangalore, Tuition in Madurai"
                 className="w-full px-3 py-2 bg-muted/30 border border-border rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-primary"
               />
             </div>

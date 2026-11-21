@@ -11,9 +11,11 @@ import {
   Palette,
   ExternalLink,
 } from "lucide-react";
+import { testNeonConnectionAction } from "../../actions/settings-actions";
+import { NeonConnectionCard } from "./neon-status-card";
 
-export default function SettingsPage() {
-  const isDbConfigured = Boolean(process.env.DATABASE_URL);
+export default async function SettingsPage() {
+  const initialDbStatus = await testNeonConnectionAction();
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto pb-12">
@@ -169,34 +171,20 @@ export default function SettingsPage() {
           </div>
 
           {/* Section 3: Database & Telemetry */}
-          <div id="database" className="p-6 rounded-2xl border border-border bg-card shadow-sm space-y-4">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <h2 className="font-bold text-sm text-foreground flex items-center gap-2">
-                <Database className="h-4 w-4 text-primary" />
-                PostgreSQL & Database Telemetry
-              </h2>
-              <span
-                className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                  isDbConfigured
-                    ? "bg-emerald-500/10 text-emerald-500"
-                    : "bg-blue-500/10 text-blue-500"
-                }`}
-              >
-                {isDbConfigured ? "Neon PostgreSQL Connected" : "Local Development Mode"}
-              </span>
-            </div>
+          <div id="database" className="space-y-4">
+            <NeonConnectionCard initialStatus={initialDbStatus} />
 
-            <div className="p-3.5 rounded-xl bg-muted/20 border border-border text-xs space-y-2">
+            <div className="p-4 rounded-xl bg-muted/20 border border-border text-xs space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Database Engine:</span>
-                <span className="font-semibold text-foreground">PostgreSQL 16 / Neon Serverless</span>
+                <span className="font-semibold text-foreground">PostgreSQL 16 / Neon Serverless Pooler</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">ORM Layer:</span>
                 <span className="font-semibold text-foreground">Drizzle ORM (Zero-Overhead SQL)</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Queue Mode:</span>
+                <span className="text-muted-foreground">Queue Worker Mode:</span>
                 <span className="font-semibold text-foreground">SELECT ... FOR UPDATE SKIP LOCKED</span>
               </div>
               <div className="flex items-center justify-between">

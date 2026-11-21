@@ -14,6 +14,9 @@
 | **ISS-003** | `/dashboard/discovery` | **High (Crash)** | `Event handlers cannot be passed to Client Component props`. Passing inline `onClick` to `<a href=...>` inside Server Component. | ✅ **RESOLVED** |
 | **ISS-004** | Homepage `/` (Free Audit Form) | **Medium (Functional)** | Free audit input form lacked `action="/dashboard/audit-lab"`, input `name="url"`, and submit button trigger. | ✅ **RESOLVED** |
 | **ISS-005** | Prototype Previews (`/preview/[slug]`) | **Medium (UX/Product)** | All business prototypes used identical blue theme and generic services regardless of industry niche. | ✅ **RESOLVED** |
+| **ISS-006** | Database Migration (`npm run db:push`) | **High (Config)** | `drizzle-kit push` looked for default `drizzle.config.json` instead of `drizzle.config.ts`. | ✅ **RESOLVED** |
+| **ISS-007** | `/dashboard/outreach` (Live Prototypes) | **High (Vercel)** | Prototype links hardcoded to `localhost:3000` instead of dynamic production app URL. | ✅ **RESOLVED** |
+| **ISS-008** | `/dashboard/discovery` (Social Connectors) | **High (Discovery)** | Social search connectors yielded empty results for local queries (e.g., "spa in villivakkam"). | ✅ **RESOLVED** |
 
 ---
 

@@ -213,7 +213,11 @@ export function OutreachClient({ initialLeads, currentTier }: OutreachClientProp
 
               <div className="flex items-center gap-2">
                 <Link
-                  href={outreachPack.previewUrl}
+                  href={
+                    outreachPack.previewUrl.startsWith("http")
+                      ? outreachPack.previewUrl.replace(/^https?:\/\/[^\/]+/, "")
+                      : outreachPack.previewUrl
+                  }
                   target="_blank"
                   className="px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground text-xs font-semibold flex items-center gap-1.5 transition-colors"
                 >

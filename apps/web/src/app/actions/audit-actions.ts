@@ -3,11 +3,16 @@
 import { runWebsiteDiagnostics, getWebDb, schema } from "@leadpulse/infrastructure";
 import { desc, eq } from "drizzle-orm";
 
+// In-memory cache for audits performed during active session (guarantees immediate visibility in UI)
+const sessionAuditsCache: any[] = [];
+
 export async function getAuditsListAction() {
+  const mergedAudits: any[] = [...sessionAuditsCache];
+
   try {
     if (process.env.DATABASE_URL) {
       const db = getWebDb();
-      const audits = await db
+      const dbAudits = await db
         .select({
           audit: schema.websiteAudits,
           business: schema.businesses,
@@ -15,16 +20,24 @@ export async function getAuditsListAction() {
         .from(schema.websiteAudits)
         .leftJoin(schema.businesses, eq(schema.websiteAudits.businessId, schema.businesses.id))
         .orderBy(desc(schema.websiteAudits.createdAt))
-        .limit(20);
+        .limit(30);
 
-      if (audits.length > 0) return audits;
+      // Deduplicate DB audits against sessionAuditsCache
+      const existingUrls = new Set(sessionAuditsCache.map((s) => s.audit.targetUrl));
+      for (const item of dbAudits) {
+        if (!existingUrls.has(item.audit.targetUrl)) {
+          mergedAudits.push(item);
+        }
+      }
+
+      if (mergedAudits.length > 0) return mergedAudits;
     }
   } catch (err: any) {
     console.warn("[Audit Actions] DB unavailable, returning mock audits.", err.message);
   }
 
   // Fallback demo audit telemetry
-  return [
+  const fallbackAudits = [
     {
       audit: {
         id: "aud-1",
@@ -79,6 +92,14 @@ export async function getAuditsListAction() {
       },
     },
   ];
+
+  for (const item of fallbackAudits) {
+    if (!mergedAudits.some((m) => m.audit.targetUrl === item.audit.targetUrl)) {
+      mergedAudits.push(item);
+    }
+  }
+
+  return mergedAudits;
 }
 
 export async function runInstantAuditAction(url: string) {
@@ -93,6 +114,46 @@ export async function runInstantAuditAction(url: string) {
 
   try {
     const result = await runWebsiteDiagnostics(formatted);
+
+    // Derive a clean display name from URL hostname
+    let derivedName = "Audited Website";
+    try {
+      const parsed = new URL(result.targetUrl);
+      const hostPart = parsed.hostname.replace(/^www\./, "").split(".")[0];
+      derivedName = hostPart.charAt(0).toUpperCase() + hostPart.slice(1) + " (Audited)";
+    } catch {
+      // ignore
+    }
+
+    // Save into session memory store so it persists in Recent Diagnostics table immediately
+    const sessionRecord = {
+      audit: {
+        id: `aud-${Date.now()}`,
+        targetUrl: result.targetUrl,
+        finalUrl: result.finalUrl || result.targetUrl,
+        httpStatus: result.httpStatus || 200,
+        sslValid: result.sslValid,
+        sslExpiresAt: result.sslExpiresAt,
+        isMobileResponsive: result.isMobileResponsive,
+        lighthousePerformance: String(result.lighthousePerformance || 60),
+        lighthouseAccessibility: String(result.lighthouseAccessibility || 80),
+        lighthouseSeo: String(result.lighthouseSeo || 70),
+        hasContactForm: result.hasContactForm,
+        hasWhatsappButton: result.hasWhatsappButton,
+        rawFindings: result.findings,
+        createdAt: new Date(),
+      },
+      business: {
+        id: "",
+        name: derivedName,
+        category: "Web Diagnostics",
+        city: "Online Audit",
+      },
+    };
+
+    // Prepend to top of session audits
+    sessionAuditsCache.unshift(sessionRecord);
+
     return { success: true, result };
   } catch (err: any) {
     return { success: false, error: err.message };

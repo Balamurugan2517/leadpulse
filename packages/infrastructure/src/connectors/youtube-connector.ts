@@ -158,13 +158,51 @@ export async function searchYouTubeChannels(params: {
   // Mock / offline fallback
   if (!apiKey || apiKey === "MOCK" || apiKey.trim() === "") {
     const normalized = query.toLowerCase();
-    const filtered = MOCK_CHENNAI_YOUTUBE_CHANNELS.filter(
+    const exactMatches = MOCK_CHENNAI_YOUTUBE_CHANNELS.filter(
       (c) =>
         c.title.toLowerCase().includes(normalized) ||
-        c.description.toLowerCase().includes(normalized) ||
-        normalized.includes("chennai")
+        c.description.toLowerCase().includes(normalized)
     );
-    return filtered.length > 0 ? filtered : MOCK_CHENNAI_YOUTUBE_CHANNELS.slice(0, maxResults);
+
+    if (exactMatches.length > 0) {
+      return exactMatches;
+    }
+
+    // Generate query-aware YouTube business channels
+    const cleanTopic = query.replace(/(in|at|near|best|top|channel|videos)/gi, "").trim();
+    const capitalizedTopic = cleanTopic.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+    const slug = cleanTopic.toLowerCase().replace(/[^a-z0-9]+/g, "");
+
+    return [
+      {
+        channelId: `UC_syn_${slug}_1`,
+        title: `${capitalizedTopic} Channel`,
+        description: `Official channel of ${capitalizedTopic}. Tutorial & client consultation videos. Call or WhatsApp us at +91 98401 88990 or DM us on Instagram @${slug}official. Contact for bookings!`,
+        customUrl: `@${slug}official`,
+        subscriberCount: 8400,
+        videoCount: 65,
+        viewCount: 195000,
+        detectedPhone: "+919840188990",
+        detectedEmail: undefined,
+        detectedWebsite: undefined,
+        hasOfficialWebsite: false,
+        opportunitySummary: `Active channel with 8.4k subscribers and zero official website. Potential for automated consultation booking portal.`,
+      },
+      {
+        channelId: `UC_syn_${slug}_2`,
+        title: `${capitalizedTopic} Academy & Vlogs`,
+        description: `Welcome to ${capitalizedTopic}! Daily updates and customer transformations. Call +91 98840 44556. No standalone website listed.`,
+        customUrl: `@${slug}vlogs`,
+        subscriberCount: 3200,
+        videoCount: 29,
+        viewCount: 78000,
+        detectedPhone: "+919884044556",
+        detectedEmail: undefined,
+        detectedWebsite: undefined,
+        hasOfficialWebsite: false,
+        opportunitySummary: `Local creator with engaged audience losing inbound leads to manual WhatsApp chats.`,
+      },
+    ];
   }
 
   try {

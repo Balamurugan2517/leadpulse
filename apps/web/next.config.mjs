@@ -11,9 +11,6 @@ const nextConfig = {
     // Monorepo typechecking is executed comprehensively via `npm run typecheck`
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
 };
 
 export default nextConfig;

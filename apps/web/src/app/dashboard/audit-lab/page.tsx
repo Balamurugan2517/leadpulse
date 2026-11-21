@@ -14,6 +14,7 @@ import {
   Clock,
 } from "lucide-react";
 import { getAuditsListAction, runInstantAuditAction } from "../../actions/audit-actions";
+import { DownloadAuditsCsvButton } from "./download-csv-button";
 
 interface AuditLabPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -174,9 +175,12 @@ export default async function AuditLabPage({ searchParams }: AuditLabPageProps) 
 
       {/* Historical Audits Table */}
       <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-border flex items-center justify-between">
-          <h3 className="font-bold text-sm">Recent Website Diagnostics</h3>
-          <span className="text-xs text-muted-foreground">{audits.length} records</span>
+        <div className="p-4 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h3 className="font-bold text-sm text-foreground">Recent Website Diagnostics</h3>
+            <span className="text-xs text-muted-foreground">{audits.length} records in audit register</span>
+          </div>
+          <DownloadAuditsCsvButton audits={audits} />
         </div>
 
         <div className="overflow-x-auto">
