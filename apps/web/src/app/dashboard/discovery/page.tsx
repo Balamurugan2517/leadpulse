@@ -23,6 +23,7 @@ import { generateBrowserBookmarkletCode } from "@leadpulse/infrastructure";
 import { MultiChannelConnectors } from "./multi-channel-connectors";
 import { BookmarkletButton } from "./bookmarklet-button";
 import { DiscoverySearchForm } from "./discovery-search-form";
+import { ImportAllButton, SaveSingleLeadButton } from "./import-leads-controls";
 
 interface DiscoveryPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -113,21 +114,7 @@ export default async function DiscoveryStudioPage({ searchParams }: DiscoveryPag
             </p>
           </div>
 
-          <form
-            action={async () => {
-              "use server";
-              const rawBusinesses = discoveryResult.leads.map((l) => l.business);
-              await importDiscoveredLeadsAction(rawBusinesses);
-            }}
-          >
-            <button
-              type="submit"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-sm"
-            >
-              <Download className="h-4 w-4" />
-              Import All {discoveryResult.totalFound} to CRM
-            </button>
-          </form>
+          <ImportAllButton leads={discoveryResult.leads.map((l) => l.business)} />
         </div>
 
         {/* Results List */}
@@ -173,6 +160,7 @@ export default async function DiscoveryStudioPage({ searchParams }: DiscoveryPag
                 </div>
 
                 <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+                  <SaveSingleLeadButton business={b} />
                   {cleanPhone && (
                     <a
                       href={`https://wa.me/${cleanPhone}`}

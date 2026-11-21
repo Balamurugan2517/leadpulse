@@ -127,10 +127,34 @@ export class BusinessRepository {
   }
 
   /**
+   * Guarantees default workspace existence to satisfy relational foreign keys
+   */
+  private async ensureWorkspace(txOrDb: any, workspaceId: string) {
+    try {
+      const [existing] = await txOrDb
+        .select({ id: schema.workspaces.id })
+        .from(schema.workspaces)
+        .where(eq(schema.workspaces.id, workspaceId))
+        .limit(1);
+
+      if (!existing) {
+        await txOrDb.insert(schema.workspaces).values({
+          id: workspaceId,
+          name: "LeadPulse Solo Agency",
+          slug: `workspace-${workspaceId.slice(0, 8)}`,
+        });
+      }
+    } catch {
+      // Graceful fallback if already inserted concurrently
+    }
+  }
+
+  /**
    * Creates a business, creates its digital asset if URL provided, initializes pipeline to DISCOVERED,
    * calculates initial demand tier score, and enqueues an audit job if website provided.
    */
   async create(input: CreateBusinessInput) {
+    await this.ensureWorkspace(this.db, input.workspaceId);
     return await this.db.transaction(async (tx: any) => {
       // 1. Insert business
       const [newBusiness] = await tx
@@ -214,6 +238,8 @@ export class BusinessRepository {
    * Batch imports leads from CSV with deduplication against existing database records.
    */
   async batchImportCsv(workspaceId: string, rows: CsvLeadRow[]) {
+    await this.ensureWorkspace(this.db, workspaceId);
+
     // 1. Fetch existing identity records for deduplication
     const existing = await this.db
       .select({

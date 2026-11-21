@@ -42,7 +42,9 @@ export async function runOsmDiscoveryAction(options: {
 }
 
 export async function importDiscoveredLeadsAction(businesses: Business[]) {
-  if (businesses.length === 0) return { importedCount: 0, skippedCount: 0 };
+  if (businesses.length === 0) {
+    return { success: false, message: "No leads selected to import", importedCount: 0, skippedCount: 0 };
+  }
 
   try {
     if (process.env.DATABASE_URL) {
@@ -58,22 +60,36 @@ export async function importDiscoveredLeadsAction(businesses: Business[]) {
         address: b.addressLine1 || "",
         city: b.city || "Chennai",
         whatsappNumber: b.whatsappNumber || b.phone || "",
-        notes: `Imported via OpenStreetMap discovery (${b.category})`,
+        notes: `Imported via Discovery Studio (${b.category})`,
       }));
 
       const res = await repo.batchImportCsv(DEFAULT_WORKSPACE_ID, csvRows);
       revalidatePath("/dashboard/leads");
+      revalidatePath("/dashboard/pipeline");
+      revalidatePath("/dashboard/outreach");
       return {
+        success: true,
+        message: `Saved ${res.importedCount} leads to CRM (${res.skippedDuplicateCount} duplicates skipped)`,
         importedCount: res.importedCount,
         skippedCount: res.skippedDuplicateCount,
       };
     }
   } catch (err: any) {
-    console.warn("[Import OSM Leads] Database write failed, using simulated response:", err.message);
+    console.warn("[Import Discovery Leads] Database write failed:", err.message);
+    return {
+      success: false,
+      message: `Database write failed: ${err.message}`,
+      importedCount: 0,
+      skippedCount: 0,
+    };
   }
 
   revalidatePath("/dashboard/leads");
+  revalidatePath("/dashboard/pipeline");
+  revalidatePath("/dashboard/outreach");
   return {
+    success: true,
+    message: `Saved ${businesses.length} leads (in-memory demo mode)`,
     importedCount: businesses.length,
     skippedCount: 0,
   };
