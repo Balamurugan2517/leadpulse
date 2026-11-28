@@ -1,21 +1,32 @@
 # LeadPulse AI - Enhancement Tracker
 
-**Last Updated:** 2026-11-21  
-**Tracking File for Feature Requests & Enhancements**
+**Last Updated:** 2026-11-28  
+**Tracking File for Feature Requests & Enhancements (Date-Wise)**
 
 ---
 
 ## 1. Enhancement Register
 
-| ID | Module / URL | Description | Priority | Status |
-|---|---|---|---|---|
-| **ENH-001** | `/dashboard/settings` | Neon DB connection verification & live health check with ping test | **High** | ✅ **COMPLETED** |
-| **ENH-002** | `/dashboard/discovery` | Strict industry + location filtering, scan progress bar with timer, lead quantity limit selector (10 to 1000) | **High** | ✅ **COMPLETED** |
-| **ENH-003** | `/dashboard/audit-lab` | Save audits to Recent Diagnostics history + formatted CSV export button | **Medium** | ✅ **COMPLETED** |
-| **ENH-004** | `/dashboard/leads/[id]` | Direct Google Maps navigation link & geolocation preview in Lead Details | **Medium** | ✅ **COMPLETED** |
-| **ENH-005** | `/dashboard/discovery` | Enhanced contact intelligence (accurate business name, phone, email, locality, website) | **High** | ✅ **COMPLETED** |
-| **ENH-006** | `/dashboard/discovery` | Rename to "Target Location" with PAN-India cascading selectors (State -> District/City -> Locality) | **High** | ✅ **COMPLETED** |
-| **ENH-007** | Public Website (`/`, `/privacy`, `/terms`) | Complete legally compliant Privacy Policy and Terms of Service public pages | **Low** | ✅ **COMPLETED** |
+| Date | ID | Module / URL | Description | Priority | Status |
+|---|---|---|---|---|---|
+| 2026-11-21 | **ENH-001** | `/dashboard/settings` | Neon DB connection verification & live health check with ping test | **High** | ✅ **COMPLETED** |
+| 2026-11-21 | **ENH-002** | `/dashboard/discovery` | Strict industry + location filtering, scan progress bar with timer, lead quantity limit selector (10 to 1000) | **High** | ✅ **COMPLETED** |
+| 2026-11-21 | **ENH-003** | `/dashboard/audit-lab` | Save audits to Recent Diagnostics history + formatted CSV export button | **Medium** | ✅ **COMPLETED** |
+| 2026-11-21 | **ENH-004** | `/dashboard/leads/[id]` | Direct Google Maps navigation link & geolocation preview in Lead Details | **Medium** | ✅ **COMPLETED** |
+| 2026-11-21 | **ENH-005** | `/dashboard/discovery` | Enhanced contact intelligence (accurate business name, phone, email, locality, website) | **High** | ✅ **COMPLETED** |
+| 2026-11-21 | **ENH-006** | `/dashboard/discovery` | Rename to "Target Location" with PAN-India cascading selectors (State -> District/City -> Locality) | **High** | ✅ **COMPLETED** |
+| 2026-11-21 | **ENH-007** | Public Website (`/`, `/privacy`, `/terms`) | Complete legally compliant Privacy Policy and Terms of Service public pages | **Low** | ✅ **COMPLETED** |
+| 2026-11-28 | **ENH-008** | `/dashboard/discovery` | Verified real-world local directory leads & improved OSM address/contact extraction | **High** | ✅ **COMPLETED** |
+| 2026-11-28 | **ENH-009** | `/dashboard/discovery` | Strict lead deduplication across names, phones, and sources (zero duplicate leads) | **High** | ✅ **COMPLETED** |
+| 2026-11-28 | **ENH-010** | `/dashboard/leads`, `/dashboard/leads/[id]` | Permanent Delete button with 2-step confirmation for unwanted saved leads | **High** | ✅ **COMPLETED** |
+| 2026-11-28 | **ENH-011** | `/dashboard/discovery` | Scrollable results container (`max-h-[540px]`) with custom Sage scrollbar | **Medium** | ✅ **COMPLETED** |
+| 2026-11-28 | **ENH-012** | `/dashboard/discovery` | Radius selector (`3 km`, `5 km`, `10 km`) using Overpass `around:` spatial queries | **High** | ✅ **COMPLETED** |
+| 2026-11-28 | **ENH-013** | `docs/guides/` | End-to-End User Guide, System Admin Guide, and Troubleshooting Guide in PDF format | **Medium** | ✅ **COMPLETED** |
+| 2026-11-28 | **ENH-014** | `/preview/[slug]` | Unique layout variants per industry vertical (Editorial Luxury, Clinical Trust, Bistro Menu, Academy Portal, Executive Advisory, Modern Bento) | **High** | ✅ **COMPLETED** |
+| 2026-11-28 | **ENH-015** | `/preview/[slug]` | Niche-relevant high-resolution photography & fallback image component (`PreviewImage`) | **Medium** | ✅ **COMPLETED** |
+| 2026-11-28 | **ENH-016** | `/dashboard/discovery` | Multi-source free lead discovery: OpenStreetMap + Startup India & MSME Open Registry + Google Places | **High** | ✅ **COMPLETED** |
+| 2026-11-28 | **ENH-017** | `tests/` | Unit tests, E2E lifecycle tests, and SSRF/CSV penetration test verification (59/59 passing) | **High** | ✅ **COMPLETED** |
+| 2026-11-28 | **ENH-018** | Global UI (`globals.css`, `layout.tsx`, `dashboard/`) | Applied LeadPulse Light Theme v1.0 (Sage Green `#5E806A` + Deep Sage `#456451` + Cream `#FFFCF5` + White `#FFFFFF`) | **High** | ✅ **COMPLETED** |
 
 ---
 

@@ -33,12 +33,16 @@ export default async function DiscoveryStudioPage({ searchParams }: DiscoveryPag
   const sParams = await searchParams;
   const selectedLocality = (typeof sParams.locality === "string" ? sParams.locality : "ALL_CHENNAI").toUpperCase();
   const selectedCategory = (typeof sParams.category === "string" ? sParams.category : "CLINIC").toUpperCase() as any;
-  const selectedLimit = typeof sParams.limit === "string" ? Math.min(parseInt(sParams.limit, 10), 1000) : 25;
+  const selectedLimit = typeof sParams.limit === "string" ? Math.min(parseInt(sParams.limit, 10) || 25, 1000) : 25;
+  const selectedRadius = typeof sParams.radius === "string" ? parseInt(sParams.radius, 10) || 5 : 5;
+  const selectedSource = (typeof sParams.source === "string" ? sParams.source : "OSM").toUpperCase() as any;
 
   // Run discovery query
   const discoveryResult = await runOsmDiscoveryAction({
     category: selectedCategory,
     locality: selectedLocality,
+    radiusKm: selectedRadius,
+    source: selectedSource,
     limit: selectedLimit,
   });
 
@@ -76,6 +80,8 @@ export default async function DiscoveryStudioPage({ searchParams }: DiscoveryPag
             initialLocality={selectedLocality}
             initialCategory={selectedCategory}
             initialLimit={selectedLimit}
+            initialRadius={selectedRadius}
+            initialSource={selectedSource}
           />
         </div>
 
@@ -117,8 +123,8 @@ export default async function DiscoveryStudioPage({ searchParams }: DiscoveryPag
           <ImportAllButton leads={discoveryResult.leads.map((l) => l.business)} />
         </div>
 
-        {/* Results List */}
-        <div className="divide-y divide-border border-t border-border mt-4">
+        {/* Scrollable Results List (ENH-011) */}
+        <div className="max-h-[540px] overflow-y-auto leadpulse-scroll divide-y divide-border border-t border-border mt-4 pr-2">
           {discoveryResult.leads.map((item, idx) => {
             const b = item.business;
             const s = item.score;

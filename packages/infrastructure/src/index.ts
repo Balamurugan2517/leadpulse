@@ -8,4 +8,5 @@ export * from "./connectors/quick-capture";
 export * from "./connectors/google-places-connector";
 export * from "./connectors/youtube-connector";
 export * from "./connectors/social-connector";
+export * from "./connectors/startup-india-connector";
 export * from "./audit/diagnostics-engine";

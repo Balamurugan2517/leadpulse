@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>LeadPulse AI — End-to-End User Guide</title>
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; color: #26352C; background: #FFFCF5; margin: 40px; line-height: 1.6; }
+  h1 { color: #456451; border-bottom: 3px solid #5E806A; padding-bottom: 8px; }
+  h2 { color: #456451; margin-top: 28px; border-left: 4px solid #5E806A; padding-left: 10px; }
+  .card { background: #FFFFFF; border: 1px solid #D2E3D5; border-radius: 10px; padding: 16px; margin: 14px 0; }
+  .badge { display: inline-block; background: #E8F0E8; color: #456451; font-weight: 700; font-size: 12px; padding: 3px 8px; border-radius: 6px; }
+  ul, ol { margin-top: 6px; }
+  li { margin-bottom: 6px; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; background: #FFFFFF; }
+  th { background: #F2F5F0; color: #26352C; text-align: left; padding: 10px; border: 1px solid #D2E3D5; }
+  td { padding: 9px 10px; border: 1px solid #D2E3D5; font-size: 14px; }
+</style>
+</head>
+<body>
+  <span class="badge">LeadPulse AI v1.0 • End-to-End Operator Manual</span>
+  <h1>LeadPulse AI — End-to-End User Guide</h1>
+  <p>Welcome to LeadPulse AI, your B2B lead intelligence, technical website audit, and client outreach platform built for solo digital agency founders.</p>
+
+  <h2>1. Command Centre (/dashboard)</h2>
+  <div class="card">
+    <p>Provides an immediate daily overview of your agency pipeline:</p>
+    <ul>
+      <li><strong>Actively Looking (Tier 1):</strong> Prospects with explicit buying intent or RFP signals.</li>
+      <li><strong>High Demand Gaps (Tier 2):</strong> Businesses missing a website or suffering from expired SSL / mobile issues.</li>
+      <li><strong>Outreach Pending:</strong> Ready-to-send WhatsApp and Email drafts awaiting founder review.</li>
+      <li><strong>Pipeline Value:</strong> Active deal value in INR across your sales stages.</li>
+    </ul>
+  </div>
+
+  <h2>2. Discovery Studio (/dashboard/discovery)</h2>
+  <div class="card">
+    <p>Discover targeted B2B prospects across India with zero mandatory paid subscriptions:</p>
+    <ol>
+      <li><strong>Target Location (PAN India):</strong> Select <em>State/UT → District/City → Locality/Area</em>.</li>
+      <li><strong>Industry & Radius:</strong> Pick your target vertical (Clinics, Tuition, Restaurants, CA/Legal, Salons & Spas) and search radius (<strong>3 km</strong>, <strong>5 km</strong>, or <strong>10 km</strong>).</li>
+      <li><strong>Lead Source & Limit:</strong> Choose <em>OpenStreetMap (Overpass)</em>, <em>Startup India & MSME Registry</em>, or <em>All Free Sources</em>, and set a scan limit (10 to 1000 leads).</li>
+      <li><strong>Run Discovery Scan:</strong> Watch the 4-phase live progress bar. Results appear in a scrollable staging list with automatic deduplication.</li>
+      <li><strong>Save to CRM:</strong> Click <strong>+ Save to CRM</strong> on individual leads or <strong>Import All to CRM</strong> to persist unique prospects to Neon PostgreSQL.</li>
+      <li><strong>Quick-Capture Bookmarklet:</strong> Drag the bookmarklet button to your browser bar. While viewing any business on Google Maps or Instagram, click it to import the business in 1 click.</li>
+    </ol>
+  </div>
+
+  <h2>3. Lead Explorer (/dashboard/leads)</h2>
+  <div class="card">
+    <ul>
+      <li><strong>Search & Filter:</strong> Filter by Demand Tier (Actively Looking, High Demand, Medium) or search by name, phone, or category.</li>
+      <li><strong>Google Maps Geolocation:</strong> Open <em>Details</em> on any lead and click <strong>Locate on Google Maps</strong> to view exact address and coordinates.</li>
+      <li><strong>Delete Unwanted Leads:</strong> Click <strong>Delete</strong> (twice to confirm) in the Actions column or inside Lead Details to permanently remove unwanted leads.</li>
+      <li><strong>Quick CSV Import:</strong> Paste CSV rows at the bottom of Lead Explorer; formula injection protection and deduplication run automatically.</li>
+    </ul>
+  </div>
+
+  <h2>4. Website Audit Lab (/dashboard/audit-lab)</h2>
+  <div class="card">
+    <ul>
+      <li>Enter any target website URL and click <strong>Run Technical Audit</strong>.</li>
+      <li>Checks SSL certificate validity/expiry, mobile viewport responsiveness, HTTP status, TTFB latency, and missing WhatsApp/contact CTAs.</li>
+      <li>Completed audits automatically appear in <strong>Recent Website Diagnostics</strong> and can be exported anytime using <strong>Download CSV Report</strong>.</li>
+    </ul>
+  </div>
+
+  <h2>5. Live Client Prototypes (/preview/[slug]) & Outreach Desk</h2>
+  <div class="card">
+    <p>Each prospect receives an instant, niche-tailored website preview with industry-specific layout, color theme, photography, and 1-click WhatsApp booking. Share this link directly from <strong>Outreach Desk</strong> via 1-click WhatsApp or Email.</p>
+  </div>
+
+  <h2>6. Sales Pipeline & Proposals (/dashboard/pipeline)</h2>
+  <div class="card">
+    <p>Move deals across Kanban stages (<em>Discovered → Contacted → In Discussion → Proposal Sent → Closed Won</em>), log meeting notes, and generate printable client proposals.</p>
+  </div>
+</body>
+</html>

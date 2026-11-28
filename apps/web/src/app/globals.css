@@ -4,44 +4,45 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 173 80% 40%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
-  }
+    /* LeadPulse Light Theme v1.0 (Sage Green + Cream + White) */
+    --background: 42 100% 98%;          /* #FFFCF5 Cream */
+    --foreground: 144 16% 18%;          /* #26352C Deep Forest Heading */
+    --card: 0 0% 100%;                  /* #FFFFFF Pure White */
+    --card-foreground: 144 16% 18%;     /* #26352C */
+    --primary: 141 15% 43%;             /* #5E806A Primary Sage */
+    --primary-foreground: 0 0% 100%;    /* #FFFFFF */
+    --secondary: 120 21% 93%;           /* #E8F0E8 Light Sage */
+    --secondary-foreground: 143 18% 33%;/* #456451 Deep Sage */
+    --muted: 96 20% 95%;                /* #F2F5F0 Table Header / Muted */
+    --muted-foreground: 135 6% 42%;     /* #647067 Body Text */
+    --accent: 120 21% 93%;              /* #E8F0E8 Light Sage */
+    --accent-foreground: 143 18% 33%;   /* #456451 */
+    --destructive: 4 48% 48%;           /* #B54740 Broken/Danger */
+    --destructive-foreground: 0 0% 100%;
+    --border: 131 24% 86%;              /* #D2E3D5 Soft Sage Border */
+    --input: 126 11% 82%;               /* #CBD5CC Input Border */
+    --ring: 141 15% 43%;                /* #5E806A Focus Ring */
+    --radius: 0.625rem;                 /* 10px consistent rounded corners */
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 6.5%;
-    --card-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 173 80% 40%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    /* Explicit Design System Tokens */
+    --primary-hover: #456451;
+    --primary-light: #E8F0E8;
+    --sage-soft: #D2E3D5;
+    --surface: #FFFFFF;
+    --sidebar: #456451;
+    --table-header: #F2F5F0;
+    --table-hover: #F3F7F2;
+    --text-primary: #26352C;
+    --text-secondary: #647067;
+    --text-sidebar: #FFFFFF;
+    --success-bg: #E5F3E8;
+    --success-text: #287345;
+    --warning-bg: #FFF3D9;
+    --warning-text: #94651B;
+    --danger-bg: #FCE8E6;
+    --danger-text: #B54740;
+    --neutral-bg: #F0F1F0;
+    --neutral-text: #657067;
   }
 }
 
@@ -50,6 +51,28 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    background-color: #FFFCF5;
+    color: #26352C;
+    @apply antialiased;
   }
+  h1, h2, h3, h4 {
+    color: #26352C;
+  }
+}
+
+/* Custom subtle scrollbar for scrollable discovery results (ENH-011) */
+.leadpulse-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.leadpulse-scroll::-webkit-scrollbar-track {
+  background: #F2F5F0;
+  border-radius: 8px;
+}
+.leadpulse-scroll::-webkit-scrollbar-thumb {
+  background: #CBD5CC;
+  border-radius: 8px;
+}
+.leadpulse-scroll::-webkit-scrollbar-thumb:hover {
+  background: #5E806A;
 }

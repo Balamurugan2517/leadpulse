@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>LeadPulse AI — System Administrator Guide</title>
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; color: #26352C; background: #FFFCF5; margin: 40px; line-height: 1.6; }
+  h1 { color: #456451; border-bottom: 3px solid #5E806A; padding-bottom: 8px; }
+  h2 { color: #456451; margin-top: 28px; border-left: 4px solid #5E806A; padding-left: 10px; }
+  .card { background: #FFFFFF; border: 1px solid #D2E3D5; border-radius: 10px; padding: 16px; margin: 14px 0; }
+  pre { background: #F2F5F0; border: 1px solid #D2E3D5; padding: 12px; border-radius: 8px; font-size: 13px; overflow-x: auto; }
+  .badge { display: inline-block; background: #E8F0E8; color: #456451; font-weight: 700; font-size: 12px; padding: 3px 8px; border-radius: 6px; }
+</style>
+</head>
+<body>
+  <span class="badge">LeadPulse AI v1.0 • Administrator & Deployment Manual</span>
+  <h1>LeadPulse AI — Administrator Guide</h1>
+  <p>This guide covers environment setup, Neon PostgreSQL administration, Vercel deployment, background worker management, and security governance.</p>
+
+  <h2>1. Architecture & Tech Stack</h2>
+  <div class="card">
+    <ul>
+      <li><strong>Frontend & Server Actions:</strong> Next.js 16.4.6 (App Router + Turbopack), React 19.3.1, Tailwind CSS.</li>
+      <li><strong>Database:</strong> Neon Serverless PostgreSQL with Drizzle ORM (no S3/object storage required).</li>
+      <li><strong>Monorepo Workspaces:</strong> <code>apps/web</code>, <code>apps/worker</code>, <code>packages/domain</code>, <code>packages/contracts</code>, <code>packages/infrastructure</code>, <code>packages/ui</code>.</li>
+    </ul>
+  </div>
+
+  <h2>2. Environment Variables (.env & Vercel)</h2>
+  <div class="card">
+    <p>Configure these variables in root <code>.env</code> locally and in Vercel Project Settings → Environment Variables:</p>
+    <pre>DATABASE_URL="postgresql://user:pass@ep-xxx.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+DATABASE_URL_UNPOOLED="postgresql://user:pass@ep-xxx.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+NEXT_PUBLIC_APP_URL="https://your-deployment.vercel.app"
+GOOGLE_PLACES_API_KEY=""   # Optional (free fallback active if omitted)
+YOUTUBE_API_KEY=""         # Optional (free fallback active if omitted)</pre>
+  </div>
+
+  <h2>3. Database Schema Management</h2>
+  <div class="card">
+    <p>Push schema updates to Neon PostgreSQL using Drizzle Kit:</p>
+    <pre>npm run db:push      # Pushes schema using drizzle.config.ts
+npm run db:studio    # Launches visual Drizzle Studio database browser</pre>
+    <p>Verify live DB connectivity anytime from <strong>/dashboard/settings → Test Connection Now</strong>.</p>
+  </div>
+
+  <h2>4. Running Background Worker & Production Builds</h2>
+  <div class="card">
+    <pre>npm install
+npm run typecheck    # Validates TypeScript across all 6 workspaces
+npm run build --workspace=apps/web
+npm run dev:web      # Local web server on http://localhost:3000
+npm run dev:worker   # Background audit job worker (SKIP LOCKED)</pre>
+  </div>
+
+  <h2>5. Security & Compliance Controls</h2>
+  <div class="card">
+    <ul>
+      <li><strong>SSRF Defense Shield:</strong> <code>validateUrlForSSRF</code> blocks loopback, RFC 1918 private subnets, cloud metadata IPs (<code>169.254.169.254</code>), and non-HTTP ports before any audit fetch.</li>
+      <li><strong>CSV Formula Defense:</strong> <code>sanitizeCellValue</code> neutralizes leading <code>=</code>, <code>+</code>, <code>-</code>, <code>@</code> characters during import and export.</li>
+      <li><strong>DPDPA 2023 & Suppression:</strong> Suppressed or deleted leads are excluded from outreach and search pipelines.</li>
+    </ul>
+  </div>
+</body>
+</html>

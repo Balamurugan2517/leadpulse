@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>LeadPulse AI — Troubleshooting Guide</title>
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; color: #26352C; background: #FFFCF5; margin: 40px; line-height: 1.6; }
+  h1 { color: #456451; border-bottom: 3px solid #5E806A; padding-bottom: 8px; }
+  h2 { color: #456451; margin-top: 24px; border-left: 4px solid #5E806A; padding-left: 10px; }
+  .card { background: #FFFFFF; border: 1px solid #D2E3D5; border-radius: 10px; padding: 16px; margin: 14px 0; }
+  .symptom { color: #B54740; font-weight: 700; }
+  .fix { color: #287345; font-weight: 700; }
+  pre { background: #F2F5F0; border: 1px solid #D2E3D5; padding: 10px; border-radius: 8px; font-size: 13px; }
+</style>
+</head>
+<body>
+  <h1>LeadPulse AI — Troubleshooting Guide</h1>
+  <p>Quick resolutions for common local development, database, discovery, and Vercel deployment issues.</p>
+
+  <h2>1. Neon Database & Migration Issues</h2>
+  <div class="card">
+    <p class="symptom">Symptom: `npm run db:push` fails saying `drizzle.config.json file does not exist`.</p>
+    <p class="fix">Resolution:</p>
+    <p>Ensure <code>package.json</code> uses <code>--config=drizzle.config.ts</code> and <code>.env</code> defines <code>DATABASE_URL</code> with <code>?sslmode=require</code>.</p>
+    <pre>npx drizzle-kit push --config=drizzle.config.ts</pre>
+  </div>
+
+  <div class="card">
+    <p class="symptom">Symptom: Settings page shows "Offline / Mock Fallback" instead of Neon Connected.</p>
+    <p class="fix">Resolution:</p>
+    <p>Verify <code>DATABASE_URL</code> is set in <code>.env</code> (local) or Vercel Environment Variables (production), then click <strong>Test Connection Now</strong> in <code>/dashboard/settings</code>.</p>
+  </div>
+
+  <h2>2. Discovery Studio & CRM Persistence</h2>
+  <div class="card">
+    <p class="symptom">Symptom: Discovered leads appear in Discovery Studio, but are not yet in Lead Explorer.</p>
+    <p class="fix">Resolution:</p>
+    <p>Discovery Scan displays a staging preview first so you can review leads before saving. Click <strong>+ Save to CRM</strong> on a card or <strong>Import All to CRM</strong> to write them to Neon DB.</p>
+  </div>
+
+  <div class="card">
+    <p class="symptom">Symptom: OpenStreetMap Overpass returns timeout or busy error.</p>
+    <p class="fix">Resolution:</p>
+    <p>Overpass has a 12-second timeout guard. If public Overpass servers are busy, LeadPulse automatically falls back to verified regional records and Startup India Open Data without crashing. Try narrowing the radius to <strong>3 km</strong> or <strong>5 km</strong>.</p>
+  </div>
+
+  <h2>3. Vercel Deployment & Prototype Links</h2>
+  <div class="card">
+    <p class="symptom">Symptom: Prototype preview links point to `localhost:3000` on Vercel.</p>
+    <p class="fix">Resolution:</p>
+    <p>Set <code>NEXT_PUBLIC_APP_URL</code> to your Vercel domain (e.g. <code>https://leadpulse-pergeone.vercel.app</code>). Dashboard preview buttons also automatically use relative <code>/preview/...</code> paths.</p>
+  </div>
+
+  <h2>4. Audit Lab SSRF Blocked Error</h2>
+  <div class="card">
+    <p class="symptom">Symptom: Audit Lab reports `SSRF Blocked` when auditing a URL.</p>
+    <p class="fix">Resolution:</p>
+    <p>By design, LeadPulse blocks private IPs (<code>127.0.0.1</code>, <code>192.168.x.x</code>, <code>10.x.x.x</code>) and non-HTTP/HTTPS schemes. Only test public business domains.</p>
+  </div>
+</body>
+</html>

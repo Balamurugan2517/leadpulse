@@ -17,6 +17,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { getLeadDetailAction, suppressLeadAction } from "../../../actions/lead-actions";
+import { DeleteLeadButton } from "../delete-lead-button";
 import { generateOutreachDrafts } from "@leadpulse/domain";
 import { redirect } from "next/navigation";
 
@@ -106,13 +107,19 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
           <form action={handleSuppress}>
             <button
               type="submit"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-destructive/30 text-destructive text-xs font-semibold hover:bg-destructive/10 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border text-muted-foreground text-xs font-semibold hover:bg-muted transition-colors"
               title="Suppress lead from future searches"
             >
               <Trash2 className="h-3.5 w-3.5" />
               Suppress
             </button>
           </form>
+          <DeleteLeadButton
+            leadId={id}
+            leadName={business.name}
+            redirectAfterDelete="/dashboard/leads"
+            variant="full"
+          />
         </div>
       </div>
 

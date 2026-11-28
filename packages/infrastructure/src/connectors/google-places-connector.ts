@@ -219,7 +219,7 @@ function generateQueryAwareGooglePlaces(query: string): GooglePlaceResult[] {
   } else if (norm.includes("dental") || norm.includes("dentist") || norm.includes("clinic") || norm.includes("doctor")) {
     niche = "Dental & Multi-Speciality Clinic";
     types = ["dentist", "health", "doctor"];
-    oppText = "Active clinic with strong reviews but zero independent website. Prime candidate for patient portal.";
+    oppText = "Active clinic with strong reviews and NO official website. Prime candidate for patient portal.";
   } else if (norm.includes("tuition") || norm.includes("coaching") || norm.includes("academy") || norm.includes("maths")) {
     niche = "Tuition & Coaching Academy";
     types = ["school", "tutoring"];
@@ -301,12 +301,10 @@ export async function searchGooglePlaces(params: {
   // If no API key or MOCK, return query-aware matches
   if (!apiKey || apiKey === "MOCK" || apiKey.trim() === "") {
     const normalized = query.toLowerCase();
+    const tokens = normalized.split(/\s+/).filter((t) => t.length > 2 && !["in", "at", "near", "the", "and"].includes(t));
     const exactMatches = MOCK_CHENNAI_PLACES.filter((p) => {
-      return (
-        p.name.toLowerCase().includes(normalized) ||
-        p.formattedAddress?.toLowerCase().includes(normalized) ||
-        p.types?.some((t) => t.toLowerCase().includes(normalized))
-      );
+      const hay = `${p.name} ${p.formattedAddress || ""} ${(p.types || []).join(" ")}`.toLowerCase();
+      return tokens.some((tok) => !["chennai", "india"].includes(tok) && hay.includes(tok));
     });
 
     if (exactMatches.length > 0) {

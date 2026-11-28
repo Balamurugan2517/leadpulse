@@ -4,6 +4,33 @@
 
 ---
 
+## [2026-11-28] Enhancement Sprint 2: Light Theme v1.0, Radius/Dedup Discovery, Lead Delete, Unique Previews & PDF Guides
+
+### Newly Created Files:
+1. `apps/web/src/app/dashboard/sidebar-nav.tsx` — Client sidebar navigation with Light Sage active state (`#E8F0E8` / `#456451`).
+2. `apps/web/src/app/dashboard/leads/delete-lead-button.tsx` — 2-step confirmation Delete button for saved leads.
+3. `packages/infrastructure/src/connectors/startup-india-connector.ts` — Free Startup India & MSME Open Registry discovery connector.
+4. `apps/web/src/app/preview/[slug]/preview-image.tsx` — Resilient client image component with gradient fallback for offline safety.
+5. `docs/guides/LeadPulse_User_Guide.pdf` — End-to-End User Guide (PDF).
+6. `docs/guides/LeadPulse_Admin_Guide.pdf` — System Administrator & Deployment Guide (PDF).
+7. `docs/guides/LeadPulse_Troubleshooting_Guide.pdf` — Troubleshooting Guide (PDF).
+8. `docs/guides/src/*.html` — Styled HTML sources for PDF generation.
+9. `tests/unit/enhancement-suite.test.ts` — Unit tests for radius queries, deduplication, Startup India, and lead deletion.
+
+### Modified Files:
+1. `apps/web/src/app/layout.tsx` & `apps/web/src/app/globals.css` — Applied LeadPulse Light Theme v1.0 (Sage Green, Cream `#FFFCF5`, Pure White).
+2. `apps/web/src/app/dashboard/layout.tsx` — Deep Sage (`#456451`) sidebar and Pure White top header.
+3. `packages/infrastructure/src/repositories/business-repository.ts` — Added `delete(id, workspaceId)`.
+4. `apps/web/src/app/actions/lead-actions.ts` — Added `deleteLeadAction(id)`.
+5. `apps/web/src/app/dashboard/leads/page.tsx` & `apps/web/src/app/dashboard/leads/[id]/page.tsx` — Added Delete Lead controls.
+6. `packages/infrastructure/src/connectors/osm-connector.ts` — Added `radiusKm` (`around:` Overpass query), `deduplicateDiscoveredLeads`, and verified real directory entries.
+7. `packages/infrastructure/src/connectors/google-places-connector.ts` — Improved token matching & opportunity summary consistency.
+8. `packages/infrastructure/src/index.ts` — Exported `startup-india-connector`.
+9. `apps/web/src/app/actions/discovery-actions.ts`, `discovery-search-form.tsx`, `discovery/page.tsx` — Added radius (`3/5/10 km`), lead source selector, and scrollable results container.
+10. `apps/web/src/app/preview/[slug]/page.tsx` — Redesigned with 6 distinct niche layout variants and industry photography.
+
+---
+
 ## [2026-11-21] Enhancement Sprint 1: Full Implementation & Hardening
 
 ### Package Ecosystem Modernization to Latest Stable:

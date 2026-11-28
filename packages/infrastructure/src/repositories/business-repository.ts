@@ -364,4 +364,16 @@ export class BusinessRepository {
 
     return true;
   }
+
+  /**
+   * Permanently deletes a saved business lead and its cascaded child records (ENH-010).
+   */
+  async delete(id: string, workspaceId: string) {
+    const deleted = await this.db
+      .delete(schema.businesses)
+      .where(and(eq(schema.businesses.id, id), eq(schema.businesses.workspaceId, workspaceId)))
+      .returning({ id: schema.businesses.id });
+
+    return deleted.length > 0;
+  }
 }

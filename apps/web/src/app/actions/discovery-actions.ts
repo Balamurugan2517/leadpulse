@@ -2,13 +2,14 @@
 
 import {
   executeOsmDiscovery,
+  executeStartupIndiaDiscovery,
+  deduplicateDiscoveredLeads,
   pollPublicIntentFeeds,
-  OSMDiscoveryOptions,
   getWebDb,
   BusinessRepository,
 } from "@leadpulse/infrastructure";
 import { Business } from "@leadpulse/contracts";
-import { calculateLeadDemandScore } from "@leadpulse/domain";
+import { calculateLeadDemandScore, resolveLocationByCode } from "@leadpulse/domain";
 import { revalidatePath } from "next/cache";
 
 const DEFAULT_WORKSPACE_ID = "00000000-0000-0000-0000-000000000001";
@@ -16,17 +17,44 @@ const DEFAULT_WORKSPACE_ID = "00000000-0000-0000-0000-000000000001";
 export async function runOsmDiscoveryAction(options: {
   category: "CLINIC" | "EDUCATION" | "RESTAURANT" | "PROFESSIONAL" | "SERVICES" | "ALL";
   locality: string;
+  radiusKm?: number;
+  source?: "OSM" | "STARTUP_INDIA" | "ALL";
   limit?: number;
 }) {
-  const result = await executeOsmDiscovery({
-    workspaceId: DEFAULT_WORKSPACE_ID,
-    category: options.category,
-    locality: options.locality,
-    limit: options.limit || 25,
-  });
+  const sourceMode = options.source || "OSM";
+  const locData = resolveLocationByCode(options.locality);
+  let collectedLeads: Business[] = [];
+  let sourceLabel = "OSM";
 
-  // Calculate preview scores for each discovered lead
-  const scoredLeads = result.leads.map((business) => {
+  if (sourceMode === "OSM" || sourceMode === "ALL") {
+    const osmRes = await executeOsmDiscovery({
+      workspaceId: DEFAULT_WORKSPACE_ID,
+      category: options.category,
+      locality: options.locality,
+      radiusKm: options.radiusKm || 5,
+      limit: options.limit || 25,
+    });
+    collectedLeads.push(...osmRes.leads);
+    sourceLabel = osmRes.source;
+  }
+
+  if (sourceMode === "STARTUP_INDIA" || sourceMode === "ALL") {
+    const startupRes = await executeStartupIndiaDiscovery({
+      workspaceId: DEFAULT_WORKSPACE_ID,
+      category: options.category,
+      city: locData.city,
+      state: locData.state,
+      limit: options.limit || 25,
+    });
+    collectedLeads.push(...startupRes.leads);
+    sourceLabel = sourceMode === "ALL" ? "OSM + STARTUP_INDIA" : startupRes.source;
+  }
+
+  // Strictly deduplicate across all discovered sources (ENH-009)
+  const uniqueLeads = deduplicateDiscoveredLeads(collectedLeads).slice(0, options.limit || 25);
+
+  // Calculate preview scores for each unique discovered lead
+  const scoredLeads = uniqueLeads.map((business) => {
     const score = calculateLeadDemandScore({ business });
     return {
       business,
@@ -35,7 +63,7 @@ export async function runOsmDiscoveryAction(options: {
   });
 
   return {
-    source: result.source,
+    source: sourceLabel,
     leads: scoredLeads,
     totalFound: scoredLeads.length,
   };

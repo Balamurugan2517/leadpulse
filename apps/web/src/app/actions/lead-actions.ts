@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { parseAndValidateLeadCsv, calculateLeadDemandScore } from "@leadpulse/domain";
 import { CreateBusinessInput, CreateBusinessInputSchema } from "@leadpulse/contracts";
 import { getWebDb, BusinessRepository } from "@leadpulse/infrastructure";
@@ -345,5 +346,30 @@ export async function suppressLeadAction(id: string) {
   }
 
   inMemoryLeads = inMemoryLeads.filter((l) => l.business.id !== id);
+  revalidatePath("/dashboard/leads");
+  revalidatePath("/dashboard/pipeline");
+  revalidatePath("/dashboard/outreach");
+  return { success: true };
+}
+
+/**
+ * Permanently deletes a saved unwanted lead from Neon DB & in-memory demo store (ENH-010).
+ */
+export async function deleteLeadAction(id: string) {
+  try {
+    if (process.env.DATABASE_URL) {
+      const db = getWebDb();
+      const repo = new BusinessRepository(db);
+      await repo.delete(id, DEFAULT_WORKSPACE_ID);
+    }
+  } catch (err: any) {
+    console.warn("[Delete Lead] Database delete failed:", err.message);
+    return { success: false, error: err.message };
+  }
+
+  inMemoryLeads = inMemoryLeads.filter((l) => l.business.id !== id);
+  revalidatePath("/dashboard/leads");
+  revalidatePath("/dashboard/pipeline");
+  revalidatePath("/dashboard/outreach");
   return { success: true };
 }

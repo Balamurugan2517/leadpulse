@@ -14,6 +14,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { getLeadsAction, importCsvLeadsAction } from "../../actions/lead-actions";
+import { DeleteLeadButton } from "./delete-lead-button";
 
 export default async function LeadExplorerPage({
   searchParams,
@@ -210,6 +211,7 @@ export default async function LeadExplorerPage({
                           >
                             Outreach
                           </Link>
+                          <DeleteLeadButton leadId={b.id} leadName={b.name} />
                         </div>
                       </td>
                     </tr>
